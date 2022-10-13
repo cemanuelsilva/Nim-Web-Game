@@ -1,13 +1,35 @@
 body {
     background-color: lightblue;
-  }
+}
 
 .center {
-    
     text-align: center;
-    
-    }
+}
 
+.column {
+  width: 100px;
+  background-color: midnightblue;
+  flex-direction: column-reverse;
+  justify-content: space-between;
+  margin: auto;
+  padding-top: 1mm;
+  padding-bottom: 1mm;
+  border-radius: 25px;
+}
 
-    
-   
+.piece {
+  height: 50px;
+  width: 50px;
+  background: ghostwhite;
+  border-width: 2px;
+  border-radius: 50%;
+  margin: auto;
+  margin-top: 10%;
+  margin-bottom: 10%;
+
+}
+
+table, th, td {
+  background-color: ghostwhite;
+  border: 1px solid black;
+}
