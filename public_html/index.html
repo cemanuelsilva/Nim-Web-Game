@@ -5,6 +5,7 @@
     <meta charset=UTF-8>        <!-- para caracteres acentuados   -->
     <title>Nim</title>  <!-- texto na decoração da janela -->
     <link rel="stylesheet" href="style.css" type="text/css">
+    <script src="config.js"></script>
   </head>
 <body>
 
@@ -18,16 +19,27 @@
 
 <hr>
 
-<div>
-<div style = "text-align: :left;"> Colunas: <input type="number" min=0 max=10>
+<div class = "center">
+  Tabuleiros:
+  <select size=1 name=size>
+    <option> 5 </option>
+    <option> 8</option>
+    <option> 10</option>
+  </select>
   Dificuldade:
   <select size=1 name=size>
   <option>I</option>
   <option>II</option>
   <option>III</option>
-</select> Primeiro a Jogar:  P1<input type="radio"> P2<input type="radio">
-  <input type ="button" value="Regras">
-  <input type ="button" value="Classificações">
+  </select> 
+  Primeiro a Jogar:  P1<input type="radio"> P2<input type="radio">
+
+  <div class="popup" onclick="myFunction()"> <input type ="button" value="Regras">
+  <span class="popuptext" id="myPopup">O Nim é um jogo matemático de estratégia em que dois jogadores alternadamente removem objetos (contas, grãos, fosforos) de diferentes pilhas. A cada jogada, o jogador deve remover pelo menos um objeto de um pilha e todos os objetos removidos devem pertencer à mesma pilha. O objetivo do jogo é remover o último objeto. (Alternativamente, o objetivo pode ser evitar tirar o último objeto - "à lá misére"). </span>
+</div>  
+<input type ="button" value="Classificações">
+
+
 </div>
 </div>
 
@@ -44,6 +56,17 @@
   </tbody>
 </table>
 --->
+
+
+<script>
+  // When the user clicks on div, open the popup
+  function myFunction() {
+    var popup = document.getElementById("myPopup");
+    popup.classList.toggle("show");
+  }
+  </script>
+
+
 
 </body>
 </html>
