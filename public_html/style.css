@@ -6,15 +6,17 @@ body {
     text-align: center;
 }
 
+h2 {
+  color: steelblue;
+}
 
 .column {
-  width: 100px;
-  background-color: midnightblue;
+  width: 80px;
+  background-color: steelblue;
   flex-direction: column-reverse;
-  justify-content: space-between;
-  margin: auto;
   padding-top: 1mm;
   padding-bottom: 1mm;
+  margin: 10px;
   border-radius: 25px;
 }
 
@@ -30,70 +32,27 @@ body {
 
 }
 
+
+#board {
+  flex-direction: row;
+  width: auto;
+  height: auto;
+  align-items: baseline;
+  justify-content: center;
+  margin-top: 20px;
+}
+
 table, th, td {
   background-color: ghostwhite;
   border: 1px solid black;
 }
 
-
-.popup {
-  position: relative;
-  display: inline-block;
-  cursor: pointer;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
-/* The actual popup */
-.popup .popuptext {
-  visibility: hidden;
+#rules {
+  background-color: ghostwhite;
   width: 500px;
-  height: 150px;
-  background-color: #555;
-  color: #fff;
-  text-align: center;
-  border-radius: 6px;
-  padding: 8px 0;
-  position: absolute;
-  z-index: 1;
-  bottom: -1000%;
-  left: -950%;
-  
+  border: 3px solid steelblue;
+  text-align: justify;
+  margin: auto;
+  padding: 5px;
+  cursor: default;
 }
-
-/* Popup arrow */
-.popup .popuptext::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: #555 transparent transparent transparent;
-}
-
-/* Toggle this class - hide and show the popup */
-.popup .show {
-  visibility: visible;
-  -webkit-animation: fadeIn 1s;
-  animation: fadeIn 1s;
-}
-
-/* Add animation (fade in the popup) */
-@-webkit-keyframes fadeIn {
-  from {opacity: 0;} 
-  to {opacity: 1;}
-}
-
-@keyframes fadeIn {
-  from {opacity: 0;}
-  to {opacity:1 ;}
-}
-
-
-
-
-
