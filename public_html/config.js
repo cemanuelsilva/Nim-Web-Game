@@ -1,9 +1,8 @@
 
 function  setGame(){
   var selId = document.getElementById('size');
-
   let col = parseInt(selId.options[selId.selectedIndex].value);
-
+  var radioPush = document.querySelector('input[name=radio1]:checked').value;
   const board = document.getElementById('board');
 
   for(let i=0, c=col; i<col;i++,c--) {
@@ -12,6 +11,14 @@ function  setGame(){
     board.appendChild(column);
     for(let j=0; j<c; j++) {
       const piece = document.createElement('div');
+      if(radioPush == "r1"){
+        startHuman();
+        playerAction(piece);
+      }
+      else{
+        startComputer();
+        playerAction(piece);
+      }
       piece.className = 'piece';
       column.appendChild(piece);
     }
@@ -53,6 +60,57 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 })
 
+
+// NOVO
+
+var currentPlayer;
+
+function playerAction(elem){
+
+  if(currentPlayer == 1){ 
+  console.log(currentPlayer);
+  elem.addEventListener('click', function handleClick(event) {
+    event.target.remove();
+  });
+  currentPlayer = 2;
+}
+  else{
+    console.log(currentPlayer);
+  elem.addEventListener('click', function handleClick(event) {
+    event.target.remove();
+  });
+  currentPlayer = 1;
+  }
+}
+
+
+function startHuman() {
+	
+  currentPlayer = 1;
+  appearBoard();
+	human();
+}
+
+function startComputer(){
+  
+  currentPlayer = 2;
+  appearBoard();
+  computer();
+}
+
+
+function computer() {
+	
+	currentPlayer = 2;
+	
+}
+
+function human() {
+
+
+	
+	currentPlayer = 1;
+}
 
 window.onload = function() {
 
