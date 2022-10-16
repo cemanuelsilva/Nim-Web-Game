@@ -2,8 +2,16 @@ body {
     background-color: lightblue;
 }
 
-.center {
+#center {
     text-align: center;
+}
+.center {
+  text-align: center;
+}
+
+#right {
+  text-align: right;
+  margin-top: -23px;
 }
 
 h2 {

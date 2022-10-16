@@ -19,7 +19,7 @@
 
 
 <div class = center> <h1> O Jogo do Nim </h1></div>
-<div class = center> <h2> Joga contra o computador ou contra um amigo!</h2></div>
+<div class = center> <h2> Joga contra o computador!</h2></div>
 
 
 <button type="button" onclick="toggleText()">Regras</button>
@@ -34,7 +34,7 @@
 
 <br>
 
-<div class = "center">
+<div id = "center">
   Tabuleiros:
   <select size=1 name=size id="size">
     <option value="5"> 5 </option>
@@ -44,10 +44,10 @@
   &nbsp;
   &nbsp;
   Dificuldade:
-  <select size=1 name=size>
-  <option>I</option>
-  <option>II</option>
-  <option>III</option>
+  <select size=1 name=size id = "difficulty">
+  <option value="1">I</option>
+  <option value="2">II</option>
+  <option value="3">III</option>
   </select>
   &nbsp;
   &nbsp;
@@ -61,6 +61,7 @@
 
 <button type="button" onclick="appearBoard()" > Iniciar o Jogo</button>
 <button type="button" onclick="disappearBoard()"> Desistir do Jogo</button>
+<div id="right"><button type="button" onclick="computerAction()">Jogada do Computador</button></div>
 <div id="board" style="display :none"> </div>
 
 

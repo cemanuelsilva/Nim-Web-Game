@@ -19,10 +19,9 @@ function  setGame(){
       }
       piece.className = 'piece';
       column.appendChild(piece);
-      
+
     }
   }
-
 }
 
 
@@ -32,6 +31,8 @@ function appearBoard() {
       board.style.display = "flex";
       setGame();
   }
+  const c = document.getElementById('center');
+  c.style.display="none"
 }
 
 function disappearBoard() {
@@ -40,6 +41,8 @@ function disappearBoard() {
     b.removeChild(b.firstChild);
   }
   board.style.display="none";
+  const c = document.getElementById('center');
+  c.style.display="block"
 }
 
 function toggleText() {
@@ -68,7 +71,7 @@ var currentPlayer;
 
 function playerAction(elem){
 
-  if(currentPlayer == 1){ 
+  if(currentPlayer == 1){
   console.log(currentPlayer);
   pieceOut(elem);
   computer();
@@ -103,24 +106,40 @@ function removeAllBefore(el)
 }
 
 function startHuman(elem) {
-	
+
   human();
-  appearBoard();
   playerAction(elem);
 
 }
 
 function startComputer(elem){
-  
+
   computer();
-  appearBoard();
-  playerAction(elem);
+  //playerAction(elem);
 
 }
 
 
+
+function computerAction()  {
+  const dif_id = document.getElementById('difficulty');
+  let dif_value = parseInt(dif_id.options[dif_id.selectedIndex].value);
+
+  console.log(dif_value);
+
+/*
+  if(dif_value == 1)
+    moveComputer1();
+  else if(dif_value == 2)
+    moveComputer2();
+  else
+    moveComputer3();
+
+*/
+}
+
 function computer() {
-	
+
 	currentPlayer = 2;
 
 }
