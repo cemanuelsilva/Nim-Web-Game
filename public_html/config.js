@@ -12,18 +12,19 @@ function  setGame(){
     for(let j=0; j<c; j++) {
       const piece = document.createElement('div');
       if(radioPush == "r1"){
-        startHuman();
-        playerAction(piece);
+        startHuman(piece);
       }
       else{
-        startComputer();
-        playerAction(piece);
+        startComputer(piece);
       }
       piece.className = 'piece';
       column.appendChild(piece);
+      
     }
   }
+
 }
+
 
 function appearBoard() {
   var b = document.getElementById('board');
@@ -69,47 +70,64 @@ function playerAction(elem){
 
   if(currentPlayer == 1){ 
   console.log(currentPlayer);
-  elem.addEventListener('click', function handleClick(event) {
-    event.target.remove();
-  });
-  currentPlayer = 2;
+  pieceOut(elem);
+  computer();
 }
   else{
     console.log(currentPlayer);
-  elem.addEventListener('click', function handleClick(event) {
-    event.target.remove();
-  });
-  currentPlayer = 1;
+    pieceOut(elem);
+    human(elem);
   }
 }
 
+function pieceOut(elem){
 
-function startHuman() {
-	
-  currentPlayer = 1;
-  appearBoard();
-	human();
+  elem.addEventListener('click', function handleClick(event) {
+    if(!(elem.previousElementSibling)){
+      event.target.remove();
+    }
+    else{
+    removeAllBefore(elem);
+    event.target.remove();
+    }
+  });
+
 }
 
-function startComputer(){
-  
-  currentPlayer = 2;
+removeAllBefore(document.getElementById('removeAbove'));
+function removeAllBefore(el)
+{
+  var prevEl;
+  while (prevEl = el.previousElementSibling)
+    prevEl.parentNode.removeChild(prevEl);
+}
+
+function startHuman(elem) {
+	
+  human();
   appearBoard();
+  playerAction(elem);
+
+}
+
+function startComputer(elem){
+  
   computer();
+  appearBoard();
+  playerAction(elem);
+
 }
 
 
 function computer() {
 	
 	currentPlayer = 2;
-	
+
 }
 
 function human() {
 
-
-	
-	currentPlayer = 1;
+  currentPlayer = 1;
 }
 
 window.onload = function() {
