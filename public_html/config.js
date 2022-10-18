@@ -208,7 +208,7 @@ function moveComputer3() {
     totalNimSum = totalNimSum ^ piecesColumn[i];
   }
 
-  console.log(totalNimSum);
+  //console.log(totalNimSum);
 
   let result = 0;
     for(let i=0; i<col; i++) {
