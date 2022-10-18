@@ -152,7 +152,7 @@ function computerAction()  {
   const dif_id = document.getElementById('difficulty');
   let dif_value = parseInt(dif_id.options[dif_id.selectedIndex].value);
 
-  console.log("TOTAL DE PEÇAS" + totalPieces);
+  //console.log("TOTAL DE PEÇAS" + totalPieces);
 
   if(dif_value==1) {
     moveComputer1();
