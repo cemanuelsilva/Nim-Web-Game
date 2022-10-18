@@ -1,38 +1,63 @@
+var currentPlayer;
+var totalPieces;
+var piecesColumn = [];
+var nCompMove;
+var col;
+
 
 function  setGame(){
-  var selId = document.getElementById('size');
-  let col = parseInt(selId.options[selId.selectedIndex].value);
-  var radioPush = document.querySelector('input[name=radio1]:checked').value;
+
+  console.log(currentPlayer);
+
+
   const board = document.getElementById('board');
 
-  for(let i=0, c=col; i<col;i++,c--) {
+  for(let i=0; i<col;i++) {
     const column = document.createElement('div');
     column.className = 'column';
     board.appendChild(column);
-    for(let j=0; j<c; j++) {
+    for(let j=0; j<piecesColumn[i]; j++) {
       const piece = document.createElement('div');
-      if(radioPush == "r1"){
-        startHuman(piece);
-      }
-      else{
-        startComputer(piece);
+      if(currentPlayer == 1) {
+        pieceOut(piece,i);
       }
       piece.className = 'piece';
       column.appendChild(piece);
-
     }
+  }
+
+  if(currentPlayer == 2) {
+    humanAction();
   }
 }
 
 
 function appearBoard() {
   var b = document.getElementById('board');
+
   if (b.style.display === "none") {
+      var selId = document.getElementById('size');
+      col = parseInt(selId.options[selId.selectedIndex].value);
+
+      const dif_id = document.getElementById('difficulty');
+      let dif_value = parseInt(dif_id.options[dif_id.selectedIndex].value);
+
+      let c = col;
+      for(let i=0; i<col; i++, c--) {piecesColumn[i] = c; totalPieces+=c;}
       board.style.display = "flex";
-      setGame();
+
+      var radioPush = document.querySelector('input[name=radio1]:checked').value;
+
+      if(radioPush == "r1") {
+          human();
+          setGame();
+      }
+      else {
+          computerAction();
+        }
   }
   const c = document.getElementById('center');
-  c.style.display="none"
+  c.style.display="none";
 }
 
 function disappearBoard() {
@@ -41,8 +66,10 @@ function disappearBoard() {
     b.removeChild(b.firstChild);
   }
   board.style.display="none";
+
   const c = document.getElementById('center');
   c.style.display="block"
+
 }
 
 function toggleText() {
@@ -67,87 +94,102 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // NOVO
 
-var currentPlayer;
+function pieceOut(elem, index){
 
-function playerAction(elem){
-
-  if(currentPlayer == 1){
-  console.log(currentPlayer);
-  pieceOut(elem);
-  computer();
-}
-  else{
-    console.log(currentPlayer);
-    pieceOut(elem);
-    human(elem);
-  }
-}
-
-function pieceOut(elem){
 
   elem.addEventListener('click', function handleClick(event) {
     if(!(elem.previousElementSibling)){
+      piecesColumn[index]--;
+      //console.log("REMOVEU-SE UMA PEÇA DA COLUNA" + index + " ---- FICA:" + piecesColumn[index]);
       event.target.remove();
+
     }
     else{
-    removeAllBefore(elem);
+    removeAllBefore(elem, index);
     event.target.remove();
+    piecesColumn[index]--;
     }
   });
-
 }
 
-removeAllBefore(document.getElementById('removeAbove'));
-function removeAllBefore(el)
+//removeAllBefore(document.getElementById('removeAbove'));
+
+function removeAllBefore(el,index)
 {
   var prevEl;
-  while (prevEl = el.previousElementSibling)
+  prevEl = el.previousElementSibling;
+  while (prevEl) {
+    piecesColumn[index]--;
     prevEl.parentNode.removeChild(prevEl);
+    prevEl = el.previousElementSibling
+ }
 }
 
-function startHuman(elem) {
 
+function humanAction() {
   human();
-  playerAction(elem);
-
+  let b = document.getElementById('board');
+  while(b.firstChild) {
+    b.removeChild(b.firstChild);
+  }
+  setGame();
 }
-
-function startComputer(elem){
-
-  computer();
-  //playerAction(elem);
-
-}
-
 
 
 function computerAction()  {
+
+  computer();
+  nCompMove++;
+  //TIRAR ESTADO DE TABULERIO CORRENTE
+  let b = document.getElementById('board');
+  while(b.firstChild) {
+    b.removeChild(b.firstChild);
+  }
+
   const dif_id = document.getElementById('difficulty');
   let dif_value = parseInt(dif_id.options[dif_id.selectedIndex].value);
 
-  console.log(dif_value);
+  totalPieces = 0;
+  for(let i=0; i<col; i++)
+    totalPieces += piecesColumn[i];
 
-/*
-  if(dif_value == 1)
+
+  if(dif_value==1) {
     moveComputer1();
-  else if(dif_value == 2)
+  }
+  else if(dif_value==2) {
     moveComputer2();
-  else
+  }
+  else {
     moveComputer3();
-
-*/
+  }
+  setGame();
 }
 
-function computer() {
 
-	currentPlayer = 2;
+function moveComputer1() {
+
+
+}
+
+function moveComputer2() {
+
+
+}
+
+function moveComputer3() {
+
 
 }
 
 function human() {
-
   currentPlayer = 1;
 }
+
+function computer() {
+  currentPlayer = 2;
+}
+
 
 window.onload = function() {
 
