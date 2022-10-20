@@ -9,6 +9,7 @@ body {
   text-align: center;
 }
 
+
 #right {
   text-align: right;
   margin-top: -23px;
@@ -64,3 +65,20 @@ table, th, td {
   padding: 5px;
   cursor: default;
 }
+
+
+.hidden {
+
+  display: none;
+
+}
+
+
+table.classificação { width:300px; border-collapse: collapse; }
+  .classificação th, .classificação td { padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: steelblue;
+  color: white; }
+  .classificação thead { background-color:lightblue; }
+  .classificação tbody { font-style: italic; }
