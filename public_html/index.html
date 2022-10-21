@@ -18,24 +18,29 @@
 </div>
 
 
-<div class = center> <h1> O Jogo do Nim </h1></div>
+<div class = center> <h1> O Jogo do <i>Nim</i> </h1></div>
 <div class = center> <h2> Joga contra o computador!</h2></div>
 
 
 <button type="button" onclick="toggleText()">Regras</button>
-<p id="rules" style="display: none">O Nim é um jogo de estratégia em que dois jogadores alternadamente removem objetos de diferentes pilhas. A cada jogada, o jogador deve remover pelo menos um objeto de uma pilha e todos os objetos removidos devem pertencer à mesma pilha. Ganha quem tirar o último objeto.</p>
-
+<p id="rules" style="display: none"> O <i>Nim</i> é um jogo de estratégia em que dois jogadores alternadamente removem objetos de diferentes pilhas. A cada jogada, o jogador deve remover pelo menos um objeto de uma pilha e todos os objetos removidos devem pertencer à mesma pilha. Ganha quem tirar o último objeto.
+  <br>
+  <br>
+  Antes de começar um jogo, o jogador deve escolher o tamanho do tabuleiro e a dificuldade do computador. Para remover peças de uma pilha, basta cliquar na bola a partir da qual os objetos desejados são eliminados.
+  <br>
+  <br>
+  No ínicio do jogo, o jogador realiza o primeiro movimento, a menos que deixe o computador jogar primeiro pressionando o botão "Jogada do Computador".
+</p>
 <br>
 
-<!-- MUDAR TEXTO -->
 
 
 <hr>
 
 <br>
 
-<div id = "center">
-  Tabuleiros:
+<div class="center">
+  Pilhas:
   <select size=1 name=size id="size">
     <option value="5"> 5 </option>
     <option value="8"> 8</option>
@@ -51,10 +56,6 @@
   </select>
   &nbsp;
   &nbsp;
-  Primeira Jogada:
-  &nbsp;
-  Jogador<input type="radio" name="radio1" id="r1" checked="checked" value="r1"> Computador<input type="radio" name="radio1" id="r2" value="r2">
-
 </div>
 
 <br>
@@ -67,8 +68,10 @@
 
 <div style="margin-top: 50px"><button type="button" onclick="toggleTable()">Classificações</button></div>
 
-<div class = "classificação">
-<table style ="width:20%" id="tabelaClass" class="hidden">
+<br>
+
+<div class = "scores">
+<table style ="width:30%" id="tableClass" class="hidden">
   <thead>
     <tr>
       <th>Utilizador</th>

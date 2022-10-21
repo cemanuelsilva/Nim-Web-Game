@@ -2,9 +2,7 @@ body {
     background-color: lightblue;
 }
 
-#center {
-    text-align: center;
-}
+
 .center {
   text-align: center;
 }
@@ -54,13 +52,14 @@ h2 {
 table, th, td {
   background-color: ghostwhite;
   border: 1px solid black;
+  text-align: center;
 }
 
 #rules {
   background-color: ghostwhite;
-  width: 500px;
+  width: 600px;
   border: 3px solid steelblue;
-  text-align: justify;
+  text-align: center;
   margin: auto;
   padding: 5px;
   cursor: default;
@@ -68,17 +67,16 @@ table, th, td {
 
 
 .hidden {
-
   display: none;
-
 }
 
 
-table.classificação { width:300px; border-collapse: collapse; }
-  .classificação th, .classificação td { padding-top: 12px;
+table.scores { width:300px; border-collapse: collapse; }
+  .scores th, .scores td { padding-top: 12px;
   padding-bottom: 12px;
-  text-align: left;
+  text-align: center;
+
   background-color: steelblue;
   color: white; }
-  .classificação thead { background-color:lightblue; }
-  .classificação tbody { font-style: italic; }
+  .scores thead { background-color:lightblue; }
+  .scores tbody { font-style: italic; }

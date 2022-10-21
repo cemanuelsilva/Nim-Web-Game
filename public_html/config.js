@@ -1,4 +1,4 @@
-let currentPlayer
+let currentPlayer;
 let totalPieces
 let piecesColumn = []
 let nimSum = []
@@ -8,14 +8,16 @@ let countWinPC = 0
 let countWinP1 = 0
 let countLosePC = 0
 let countLoseP1 = 0
+let didMove = false;
 
 let userData = [
-	{ utilizador: "Player1", Wins: countWinP1, Loses: countLoseP1 },
+	{ utilizador: "Jogador", Wins: countWinP1, Loses: countLoseP1 },
 	{ utilizador: "Computador", Wins: countWinP1, Loses: countLoseP1 }
 ]
 
 function setGame() {
 	const board = document.getElementById("board")
+	didMove = false
 
 	for (let i = 0; i < col; i++) {
 		const column = document.createElement("div")
@@ -23,17 +25,16 @@ function setGame() {
 		board.appendChild(column)
 		for (let j = 0; j < piecesColumn[i]; j++) {
 			const piece = document.createElement("div")
-			if (currentPlayer == 1) {
+			if(didMove==false)
 				pieceOut(piece, i)
-			}
 			piece.className = "piece"
 			column.appendChild(piece)
-      
 		}
 	}
 }
 
 function appearBoard() {
+
 	let b = document.getElementById("board")
 
 	if (b.style.display === "none") {
@@ -52,18 +53,14 @@ function appearBoard() {
 		board.style.display = "flex"
 
 		nCompMove = 0
+		didMove = false
 
-		let radioPush = document.querySelector("input[name=radio1]:checked").value
-
-		if (radioPush == "r1") {
-			human()
-			setGame()
-		} else {
-			computerAction()
-		}
+		human()
+		setGame()
 	}
-	const c = document.getElementById("center")
-	c.style.display = "none"
+
+	//const c = document.getElementById("center")
+	//c.style.display = "none"
 }
 
 function disappearBoard() {
@@ -73,8 +70,8 @@ function disappearBoard() {
 	}
 	board.style.display = "none"
 
-	const c = document.getElementById("center")
-	c.style.display = "block"
+	//const c = document.getElementById("center")
+	//c.style.display = "block"
 }
 
 function toggleText() {
@@ -101,16 +98,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function pieceOut(elem, index) {
 	elem.addEventListener("click", function handleClick(event) {
-		if (!elem.previousElementSibling) {
-			piecesColumn[index]--
-			totalPieces--
-			//console.log("REMOVEU-SE UMA PEÇA DA COLUNA" + index + " ---- FICA:" + piecesColumn[index]);
-			event.target.remove()
-		} else {
-			removeAllBefore(elem, index)
-			event.target.remove()
-			piecesColumn[index]--
-			totalPieces--
+		if(didMove == false) {
+			if (!elem.previousElementSibling) {
+				piecesColumn[index]--
+				totalPieces--
+
+				//console.log("REMOVEU-SE UMA PEÇA DA COLUNA" + index + " ---- FICA:" + piecesColumn[index]);
+				event.target.remove()
+			} else {
+				removeAllBefore(elem, index)
+				event.target.remove()
+				piecesColumn[index]--
+				totalPieces--
+			}
+		didMove = true
 		}
 	})
 }
@@ -132,18 +133,24 @@ function humanAction() {
 	human()
 	setGame()
 }
+
 function computerAction() {
 	const userDataStats = userData[0]
 	const computerDataStats = userData[1]
 
+
 	computer()
-	if (totalPieces == 0) {
+
+	if (totalPieces == 0 && nCompMove>0) {
+		nCompMove=0
 		console.log("Jogador ganhou")
 		alert("Parabéns! Ganhou")
 		computerDataStats.Loses++
 		userDataStats.Wins++
 		disappearBoard()
-	} else {
+		loadTableData([userDataStats, computerDataStats])
+		
+	} else if (totalPieces!=0){
 		nCompMove++
 		//TIRAR ESTADO DE TABULERIO CORRENTE
 		let b = document.getElementById("board")
@@ -170,12 +177,13 @@ function computerAction() {
 			computerDataStats.Wins++
 			userDataStats.Loses++
 			disappearBoard()
+			loadTableData([userDataStats, computerDataStats])
 		} else {
 			humanAction()
 		}
 	}
-	loadTableData([userDataStats, computerDataStats])
 }
+
 function moveComputer1() {
 	let index = Math.floor(Math.random() * col)
 	while (piecesColumn[index] == 0) {
@@ -225,6 +233,7 @@ function computer() {
 }
 
 window.onload = () => {
+	//appearBoard()
 	loadTableData(userData)
 }
 
@@ -244,6 +253,6 @@ function loadTableData(userData) {
 
 function toggleTable() {
 
-  document.getElementById("tabelaClass").classList.toggle("hidden");
+  document.getElementById("tableClass").classList.toggle("hidden")
 
 }
