@@ -1,14 +1,16 @@
-let currentPlayer;
+let currentPlayer
 let totalPieces
 let piecesColumn = []
 let nimSum = []
 let nCompMove
 let col
+let dif_value
 let countWinPC = 0
 let countWinP1 = 0
 let countLosePC = 0
 let countLoseP1 = 0
-let didMove = false;
+let didMove = false
+let initGame = false
 
 let userData = [
 	{ utilizador: "Jogador", Wins: countWinP1, Loses: countLoseP1 },
@@ -33,6 +35,8 @@ function setGame() {
 	}
 }
 
+
+
 function appearBoard() {
 
 	let b = document.getElementById("board")
@@ -42,7 +46,7 @@ function appearBoard() {
 		col = parseInt(selId.options[selId.selectedIndex].value)
 
 		const dif_id = document.getElementById("difficulty")
-		let dif_value = parseInt(dif_id.options[dif_id.selectedIndex].value)
+	  dif_value = parseInt(dif_id.options[dif_id.selectedIndex].value)
 
 		let c = col
 		totalPieces = 0
@@ -53,15 +57,29 @@ function appearBoard() {
 		board.style.display = "flex"
 
 		nCompMove = 0
+		nHumanMove = 0
 		didMove = false
+		initGame = true
 
-		human()
-		setGame()
+		humanAction()
 	}
-
-	//const c = document.getElementById("center")
-	//c.style.display = "none"
 }
+
+
+function quitGame() {
+	const userDataStats = userData[0]
+	const computerDataStats = userData[1]
+	if(initGame) {
+		alert("Desistiu do jogo... Perdeu")
+		computerDataStats.Wins++
+		userDataStats.Loses++
+		loadTableData([userDataStats, computerDataStats])
+		disappearBoard()
+		initGame = false
+	}
+}
+
+
 
 function disappearBoard() {
 	let b = document.getElementById("board")
@@ -69,9 +87,6 @@ function disappearBoard() {
 		b.removeChild(b.firstChild)
 	}
 	board.style.display = "none"
-
-	//const c = document.getElementById("center")
-	//c.style.display = "block"
 }
 
 function toggleText() {
@@ -112,13 +127,11 @@ function pieceOut(elem, index) {
 				totalPieces--
 			}
 		didMove = true
-		
-		}
+	 } else
+		alert("Jogada inválida")
 	})
-	
 }
 
-//removeAllBefore(document.getElementById('removeAbove'));
 
 function removeAllBefore(el, index) {
 	let prevEl
@@ -133,6 +146,7 @@ function removeAllBefore(el, index) {
 
 function humanAction() {
 	human()
+	nHumanMove++
 	setGame()
 }
 
@@ -151,7 +165,7 @@ function computerAction() {
 		userDataStats.Wins++
 		disappearBoard()
 		loadTableData([userDataStats, computerDataStats])
-		
+
 	} else if (totalPieces!=0){
 		nCompMove++
 		//TIRAR ESTADO DE TABULERIO CORRENTE
@@ -159,9 +173,6 @@ function computerAction() {
 		while (b.firstChild) {
 			b.removeChild(b.firstChild)
 		}
-
-		const dif_id = document.getElementById("difficulty")
-		let dif_value = parseInt(dif_id.options[dif_id.selectedIndex].value)
 
 		//console.log("TOTAL DE PEÇAS" + totalPieces);
 
@@ -180,6 +191,7 @@ function computerAction() {
 			userDataStats.Loses++
 			disappearBoard()
 			loadTableData([userDataStats, computerDataStats])
+
 		} else {
 			humanAction()
 		}
@@ -213,7 +225,6 @@ function moveComputer3() {
 		totalNimSum = totalNimSum ^ piecesColumn[i]
 	}
 
-	//console.log(totalNimSum);
 
 	let result = 0
 	for (let i = 0; i < col; i++) {
@@ -235,12 +246,10 @@ function computer() {
 }
 
 window.onload = () => {
-	//appearBoard()
 	loadTableData(userData)
 }
 
 function loadTableData(userData) {
-	
 	const tableBody = document.getElementById("tableData")
 	let dataHtml = ""
 
