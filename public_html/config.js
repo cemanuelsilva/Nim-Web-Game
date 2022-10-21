@@ -112,8 +112,10 @@ function pieceOut(elem, index) {
 				totalPieces--
 			}
 		didMove = true
+		
 		}
 	})
+	
 }
 
 //removeAllBefore(document.getElementById('removeAbove'));
@@ -238,6 +240,7 @@ window.onload = () => {
 }
 
 function loadTableData(userData) {
+	
 	const tableBody = document.getElementById("tableData")
 	let dataHtml = ""
 

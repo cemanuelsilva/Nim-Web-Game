@@ -22,7 +22,7 @@
 <div class = center> <h2> Joga contra o computador!</h2></div>
 
 
-<button type="button" onclick="toggleText()">Regras</button>
+<button class = "button" type="button" onclick="toggleText()">Regras</button>
 <p id="rules" style="display: none"> O <i>Nim</i> é um jogo de estratégia em que dois jogadores alternadamente removem objetos de diferentes pilhas. A cada jogada, o jogador deve remover pelo menos um objeto de uma pilha e todos os objetos removidos devem pertencer à mesma pilha. Ganha quem tirar o último objeto.
   <br>
   <br>
@@ -60,18 +60,18 @@
 
 <br>
 
-<button type="button" onclick="appearBoard()"> Iniciar o Jogo</button>
-<button type="button" onclick="disappearBoard()"> Desistir do Jogo</button>
-<div id="right"><button type="button" onclick="computerAction()">Jogada do Computador</button></div>
+<div class = "center">
+<button class = "button" type="button" onclick="appearBoard()"> Iniciar o Jogo</button>
+<button class = "button" type="button" onclick="disappearBoard()"> Desistir do Jogo</button>
+<button class = "button" type="button" onclick="computerAction()">Jogada do Computador</button>
+<button class = "button" type="button" onclick="toggleTable()">Classificações</button>
 <div id="board" style="display :none"> </div>
-
-
-<div style="margin-top: 50px"><button type="button" onclick="toggleTable()">Classificações</button></div>
+</div>
 
 <br>
 
 <div class = "scores">
-<table style ="width:30%" id="tableClass" class="hidden">
+<table style ="width:30%; border:1px solid black;margin-left:auto;margin-right:auto;" id="tableClass" class="hidden">
   <thead>
     <tr>
       <th>Utilizador</th>

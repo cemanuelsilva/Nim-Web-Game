@@ -75,8 +75,30 @@ table.scores { width:300px; border-collapse: collapse; }
   .scores th, .scores td { padding-top: 12px;
   padding-bottom: 12px;
   text-align: center;
+  
 
   background-color: steelblue;
   color: white; }
   .scores thead { background-color:lightblue; }
   .scores tbody { font-style: italic; }
+
+
+  .button{
+
+    cursor: pointer;
+    outline: 0;
+    display: inline-block;
+    font-weight: 400;
+    line-height: 1.5;
+    text-align: center;
+    background-color: white;
+    border: 1px solid transparent;
+    padding: 6px 12px;
+    font-size: 1rem;
+    border-radius: .25rem;
+    color: steelblue;
+    border-color: steelblue;
+    
+  }
+
+  
