@@ -1,5 +1,6 @@
 body {
     background-color: lightblue;
+    font-family: "Lucida Console", "Courier New";
 }
 
 
@@ -25,9 +26,11 @@ h2 {
   padding-bottom: 1mm;
   margin: 10px;
   border-radius: 25px;
+  margin-bottom: 50px;
 }
 
 .piece {
+  cursor: pointer;
   height: 50px;
   width: 50px;
   background: ghostwhite;
@@ -36,7 +39,6 @@ h2 {
   margin: auto;
   margin-top: 10%;
   margin-bottom: 10%;
-
 }
 
 
@@ -47,6 +49,7 @@ h2 {
   align-items: baseline;
   justify-content: center;
   margin-top: 20px;
+  padding-top: 20px;
 }
 
 table, th, td {

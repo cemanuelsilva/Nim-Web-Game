@@ -5,7 +5,7 @@
     <meta charset=UTF-8>        <!-- para caracteres acentuados   -->
     <title>Nim</title>  <!-- texto na decoração da janela -->
     <link rel="stylesheet" href="style.css" type="text/css">
-    <script src="config.js"></script>
+    <script src="main.js"></script>
   </head>
 <body>
 
@@ -13,9 +13,11 @@
 
 
 <div>
-    <div style = "text-align: right;"> Nome do Utilizador: <input type = text> Password: <input type = password> <input type="button" value="Login" />
+    <div style = "text-align: right;"> Nome do Utilizador: <input type = text> Password: <input type = password> <input type="button" value="Login">
     </div>
 </div>
+
+<br>
 
 
 <div class = center> <h1> O Jogo do <i>Nim</i> </h1></div>
@@ -29,7 +31,7 @@
   Antes de começar um jogo, o jogador deve escolher o tamanho do tabuleiro e a dificuldade do computador. Para remover peças de uma pilha, basta cliquar na bola a partir da qual os objetos desejados são eliminados.
   <br>
   <br>
-  No ínicio do jogo, o jogador realiza o primeiro movimento, a menos que deixe o computador jogar primeiro pressionando o botão "Jogada do Computador".
+  No início do jogo, o jogador realiza o primeiro movimento, a menos que deixe o computador jogar primeiro pressionando o botão "Jogada do Computador".
 </p>
 <br>
 
@@ -39,8 +41,9 @@
 
 <br>
 
+
 <div class="center">
-  Pilhas:
+  Número de Pilhas:
   <select size=1 name=size id="size">
     <option value="5"> 5 </option>
     <option value="8"> 8</option>
@@ -59,15 +62,18 @@
 </div>
 
 <br>
+<br>
+<br>
 
 <div class = "center">
 <button class = "button" type="button" onclick="appearBoard()"> Iniciar o Jogo</button>
 <button class = "button" type="button" onclick="quitGame()"> Desistir do Jogo</button>
 <button class = "button" type="button" onclick="computerAction()">Jogada do Computador</button>
 <button class = "button" type="button" onclick="toggleTable()">Classificações</button>
+<br>
+<br>
 <div id="board" style="display :none"> </div>
 </div>
-
 <br>
 
 <div class = "scores">
