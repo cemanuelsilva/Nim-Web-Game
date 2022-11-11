@@ -37,19 +37,13 @@
 
 
 
-<hr>
-
-<br>
-
-
 <div class="center">
   Número de Pilhas:
   <select size=1 name=size id="size">
     <option value="5"> 5 </option>
+    <option value="7"> 7</option>
     <option value="8"> 8</option>
-    <option value="10"> 10</option>
   </select>
-  &nbsp;
   &nbsp;
   Dificuldade:
   <select size=1 name=size id = "difficulty">
@@ -58,7 +52,7 @@
   <option value="3">III</option>
   </select>
   &nbsp;
-  &nbsp;
+  Primeira Jogada: Jogador<input type="radio" name="radio1" id="r1" checked="checked" value="r1"> Computador<input type="radio" name="radio1" id="r2" value="r2">
 </div>
 
 <br>
@@ -68,7 +62,6 @@
 <div class = "center">
 <button class = "button" type="button" onclick="appearBoard()"> Iniciar o Jogo</button>
 <button class = "button" type="button" onclick="quitGame()"> Desistir do Jogo</button>
-<button class = "button" type="button" onclick="computerAction()">Jogada do Computador</button>
 <button class = "button" type="button" onclick="toggleTable()">Classificações</button>
 <br>
 <br>

@@ -9,7 +9,6 @@ let countWinPC = 0               // Valores para a tabela de Classificações
 let countWinP1 = 0
 let countLosePC = 0
 let countLoseP1 = 0
-let didMove                      // True se o jogador terminou a sua jogada
 let initGame = false             // True se o botão "Iniciar Jogo" foi pressionado
 
 
@@ -29,8 +28,7 @@ function setGame() {
 		board.appendChild(column)
 		for (let j = 0; j < piecesColumn[i]; j++) {
 			const piece = document.createElement("div")
-			if(!didMove)
-				pieceOut(piece, i)
+			pieceOut(piece, i)
 			piece.className = "piece"
 			column.appendChild(piece)
 		}
@@ -58,14 +56,19 @@ function appearBoard() {
 		}
 
 		board.style.display = "flex"
+		var radioPush = document.querySelector('input[name=radio1]:checked').value;
 
 		nCompMove = 0
 		nHumanMove = 0
-		didMove = false
 		initGame = true
-		justClicked=false       //True se o botão "Jogada do Computador" foi pressionado pelo menos uma vez
-
-		humanAction()
+		if(radioPush == "r1") {
+          human();
+          setGame();
+      }
+      else {
+				  setGame();
+          computerAction();
+        }
 	}
 }
 
@@ -105,7 +108,7 @@ function toggleText() {
 
 function pieceOut(elem, index) {
 	elem.addEventListener("click", function handleClick(event) {
-		if(didMove == false) {                                    // Feita uma jogada, não permitir jogar logo de seguida
+		if(!didMove) {                                  // Feita uma jogada, não permitir jogar logo de seguida
 			if (!elem.previousElementSibling) {
 				piecesColumn[index]--
 				totalPieces--
@@ -119,10 +122,13 @@ function pieceOut(elem, index) {
 				justClicked=false
 				piecesColumn[index]--
 				totalPieces--
+
+				}
+				didMove=true
+				computerAction()
+			} else {
+				alert("Jogada Inválida")
 			}
-		didMove = true
-	 } else
-		alert("Jogada inválida")
 	})
 }
 
@@ -143,16 +149,14 @@ function humanAction() {
 	setGame()
 }
 
-function computerAction() {
+async function computerAction() {
 	const userDataStats = userData[0]
 	const computerDataStats = userData[1]
 
+  await new Promise(r => setTimeout(r, 250))
 
-  // Não permitir que o computador jogue duas vezes seguidas
-	if(nHumanMove >= nCompMove && !justClicked) {
 
-		justClicked=true;
-		if (totalPieces == 0 && nCompMove>0) {
+		if (totalPieces == 0) {
 			initGame = false
 			console.log("Jogador ganhou")
 			alert("Parabéns! Ganhou")
@@ -187,11 +191,9 @@ function computerAction() {
 					disappearBoard()
 					loadTableData([userDataStats, computerDataStats])
 
-				} else if(initGame){
+				} else
 						humanAction()
-				}
 		}
-	}
 }
 
 function moveComputer1() {
