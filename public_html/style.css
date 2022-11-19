@@ -160,11 +160,11 @@ table.scores { width:300px; border-collapse: collapse; }
 }
 
 .popup {
-  margin: 70px auto;
+  margin: 100px auto;
   padding: 20px;
   background: #fff;
   border-radius: 5px;
-  width: 30%;
+  width: 60%;
   position: relative;
   transition: all 5s ease-in-out;
 }
