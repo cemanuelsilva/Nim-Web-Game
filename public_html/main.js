@@ -1,3 +1,4 @@
+
 let currentPlayer                // Jogador atual
 let totalPieces                  // Número atual de peças no tabuleiro
 let piecesColumn = []            // Array que guarda o número de peças por coluna/pilha
@@ -7,14 +8,13 @@ let col                          // Tamanho do tabuleiro selecionado
 let dif_value                    // Nível de dificuldade selecionado
 let countWinPC = 0               // Valores para a tabela de Classificações
 let countWinP1 = 0
-let countLosePC = 0
-let countLoseP1 = 0
+
 let initGame = false             // True se o botão "Iniciar Jogo" foi pressionado
 
 
 let userData = [
-	{ utilizador: "Jogador", Wins: countWinP1, Loses: countLoseP1 },
-	{ utilizador: "Computador", Wins: countWinP1, Loses: countLoseP1 }
+	{ utilizador: "Jogador", Wins: countWinP1, Loses: countWinPC },
+	{ utilizador: "Computador", Wins: countWinPC, Loses: countWinP1 }
 ]
 
 // Função que permite a visualização do estado corrente do jogo
@@ -26,15 +26,17 @@ function setGame() {
 		const column = document.createElement("div")
 		column.className = "column"
 		board.appendChild(column)
+		//let h = (col-i)*60;
+	  //column.style.height = h+"px"
 		for (let j = 0; j < piecesColumn[i]; j++) {
 			const piece = document.createElement("div")
 			pieceOut(piece, i)
 			piece.className = "piece"
+			//piece.innerText = j
 			column.appendChild(piece)
 		}
 	}
 }
-
 
 // Função para inicializar o jogo
 function appearBoard() {
@@ -61,32 +63,16 @@ function appearBoard() {
 		nCompMove = 0
 		nHumanMove = 0
 		initGame = true
+
 		if(radioPush == "r1") {
-          human();
-          setGame();
-      }
-      else {
-				  setGame();
-          computerAction();
-        }
+      human()
+      setGame()
+   } else {
+			setGame();
+      computerAction();
+    }
 	}
 }
-
-
-function quitGame() {
-	const userDataStats = userData[0]
-	const computerDataStats = userData[1]
-	if(initGame) {
-		alert("Desistiu do jogo... Perdeu")
-		computerDataStats.Wins++
-		userDataStats.Loses++
-		loadTableData([userDataStats, computerDataStats])
-		disappearBoard()
-		initGame = false
-	}
-}
-
-
 
 function disappearBoard() {
 	let b = document.getElementById("board")
@@ -105,7 +91,6 @@ function toggleText() {
 	}
 }
 
-
 function pieceOut(elem, index) {
 	elem.addEventListener("click", function handleClick(event) {
 		if(!didMove) {                                  // Feita uma jogada, não permitir jogar logo de seguida
@@ -113,17 +98,14 @@ function pieceOut(elem, index) {
 				piecesColumn[index]--
 				totalPieces--
 				event.target.remove()
-				justClicked=false
 				nHumanMove++
 			} else {
 				removeAllBefore(elem, index)
 				event.target.remove()
 				nHumanMove++
-				justClicked=false
 				piecesColumn[index]--
 				totalPieces--
-
-				}
+			}
 				didMove=true
 				computerAction()
 			} else {
@@ -131,7 +113,6 @@ function pieceOut(elem, index) {
 			}
 	})
 }
-
 
 function removeAllBefore(el, index) {
 	let prevEl
@@ -156,43 +137,37 @@ async function computerAction() {
   await new Promise(r => setTimeout(r, 250))
 
 
-		if (totalPieces == 0) {
-			initGame = false
-			console.log("Jogador ganhou")
-			alert("Parabéns! Ganhou")
-			computerDataStats.Loses++
-			userDataStats.Wins++
-			disappearBoard()
-			loadTableData([userDataStats, computerDataStats])
+	if (totalPieces == 0) {
+		initGame = false
+		console.log("Jogador ganhou")
+		alert("Parabéns! Ganhou")
+		updateUserWins(userDataStats,computerDataStats);
+		disappearBoard()
+		loadTableData([userDataStats, computerDataStats])
+	} else if (totalPieces>0) {
+			let b = document.getElementById("board")
+			while (b.firstChild) {
+				b.removeChild(b.firstChild)
+			}
 
-		} else if (totalPieces>0){
-
-				let b = document.getElementById("board")
-				while (b.firstChild) {
-					b.removeChild(b.firstChild)
-				}
-
-				if (dif_value == 1) {
-					moveComputer1()
-				} else if (dif_value == 2) {
+			if (dif_value == 1) {
+				moveComputer1()
+			} else if (dif_value == 2) {
 					moveComputer2()
-				} else {
+			} else
 					moveComputer3()
-				}
 
-				nCompMove++
+			nCompMove++
 
-				if (totalPieces == 0) {
-					console.log("Computador ganhou")
-					alert("Perdeu... Tente novamente")
-					initGame = false
-					computerDataStats.Wins++
-					userDataStats.Loses++
-					disappearBoard()
-					loadTableData([userDataStats, computerDataStats])
-
-				} else
-						humanAction()
+			if (totalPieces == 0) {
+				console.log("Computador ganhou")
+				alert("Perdeu... Tente novamente")
+				initGame = false
+				updateComputerWins(userDataStats,computerDataStats)
+				disappearBoard()
+				loadTableData([userDataStats, computerDataStats])
+			} else
+				 humanAction()
 		}
 }
 
@@ -208,7 +183,6 @@ function moveComputer1() {
 	totalPieces -= piecesColumn[index] - pieces
 	piecesColumn[index] = pieces
 }
-
 
 function moveComputer2() {
 
@@ -245,7 +219,40 @@ function computer() {
 }
 
 window.onload = () => {
+	initialUpdate();
 	loadTableData(userData)
+}
+
+//Atualizar tabela de classificações ao recarregar a página
+function initialUpdate() {
+	const userDataStats = userData[0]
+	const computerDataStats = userData[1]
+
+	if(typeof(Storage) !== "undefined") {
+		if(localStorage.UserWins && localStorage.ComputerWins) {
+			computerDataStats.Loses=localStorage.UserWins
+			userDataStats.Wins=localStorage.UserWins
+			computerDataStats.Wins=localStorage.ComputerWins
+			userDataStats.Loses=localStorage.ComputerWins
+  	} else {
+			localStorage.UserWins=0
+			localStorage.ComputerWins=0
+		}
+		loadTableData([userDataStats, computerDataStats])
+  } else
+			console.log("não suportado")
+}
+
+function quitGame() {
+	const userDataStats = userData[0]
+	const computerDataStats = userData[1]
+	if(initGame) {
+		alert("Desistiu do jogo... Perdeu")
+		updateComputerWins(userDataStats,computerDataStats)
+		loadTableData([userDataStats, computerDataStats])
+		disappearBoard()
+		initGame = false
+	}
 }
 
 function loadTableData(userData) {
@@ -261,10 +268,30 @@ function loadTableData(userData) {
 }
 
 function toggleTable() {
-
   document.getElementById("tableClass").classList.toggle("hidden")
 }
 
+//Atualizar tabela de classificações quando o jogador ganha
+function updateUserWins(userDataStats, computerDataStats) {
+
+	if(localStorage.UserWins) {
+		localStorage.UserWins=
+			Number(localStorage.UserWins)+1
+		computerDataStats.Loses=localStorage.UserWins
+		userDataStats.Wins=localStorage.UserWins
+	}
+}
+
+//Atualizar a tabela de classificações quando o computador ganha
+function updateComputerWins(userDataStats, computerDataStats) {
+
+	if(localStorage.ComputerWins) {
+		localStorage.ComputerWins=
+			Number(localStorage.ComputerWins)+1
+		computerDataStats.Wins=localStorage.ComputerWins
+		userDataStats.Loses=localStorage.ComputerWins
+		}
+}
 // Get the modal
 var modal = document.getElementById("modal");
 
