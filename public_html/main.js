@@ -1,15 +1,14 @@
-
 let currentPlayer                // Jogador atual
-let totalPieces                  // Número atual de peças no tabuleiro
-let piecesColumn = []            // Array que guarda o número de peças por coluna/pilha
-let nCompMove = 0                // Número de jogadas realizadas pelo computador
-let nHumanMove = 0               // Número de jogadas realizadas pelo jogador
+let totalPieces                  // Numero atual de pecas no tabuleiro
+let piecesColumn = []            // Array que guarda o numero de pecas por coluna/pilha
+let nCompMove = 0                // Numero de jogadas realizadas pelo computador
+let nHumanMove = 0               // Numero de jogadas realizadas pelo jogador
 let col                          // Tamanho do tabuleiro selecionado
-let dif_value                    // Nível de dificuldade selecionado
-let countWinPC = 0               // Valores para a tabela de Classificações
+let dif_value                    // Nivel de dificuldade selecionado
+let countWinPC = 0               // Valores para a tabela de Classificacoes
 let countWinP1 = 0
 
-let initGame = false             // True se o botão "Iniciar Jogo" foi pressionado
+let initGame = false             // True se o botao "Iniciar Jogo" foi pressionado
 
 
 let userData = [
@@ -17,7 +16,28 @@ let userData = [
 	{ utilizador: "Computador", Wins: countWinPC, Loses: countWinP1 }
 ]
 
-// Função que permite a visualização do estado corrente do jogo
+let host = "twserver.alunos.dcc.fc.up.pt";
+let port = "8008";
+
+function register() {
+	if(!XMLHttpRequest) { console.log("XHR não é suportado"); return; }
+	const user = document.getElementById('id').value
+	const password = document.getElementById('pass').value
+
+	const xhr = new XMLHttpRequest()
+	xhr.open('POST', 'https://' + host + ':' + port , true)
+	xhr.setRequestHeader('Content-Type', 'application/json')
+	xhr.onreadystatechange = function () {
+		if (xhr.readyState === 4 && xhr.status === 200) {
+            const data = JSON.parse(xhr.responseText)
+            console.log(data.value)
+	   } else
+	      console.log("erro")
+	}
+	xhr.send(JSON.stringify({ 'user': user, 'password': password }));
+}
+
+// Funcao que permite a visualizacao do estado corrente do jogo
 function setGame() {
 	const board = document.getElementById("board")
 	didMove = false
@@ -26,19 +46,16 @@ function setGame() {
 		const column = document.createElement("div")
 		column.className = "column"
 		board.appendChild(column)
-		//let h = (col-i)*60;
-	  //column.style.height = h+"px"
 		for (let j = 0; j < piecesColumn[i]; j++) {
 			const piece = document.createElement("div")
 			pieceOut(piece, i)
 			piece.className = "piece"
-			//piece.innerText = j
 			column.appendChild(piece)
 		}
 	}
 }
 
-// Função para inicializar o jogo
+// Funcao para inicializar o jogo
 function appearBoard() {
 
 	let b = document.getElementById("board")
@@ -62,15 +79,15 @@ function appearBoard() {
 
 		nCompMove = 0
 		nHumanMove = 0
-		initGame = true
+      		initGame = true
 
-		if(radioPush == "r1") {
-      human()
-      setGame()
-   } else {
+	   if(radioPush == "r1") {
+      		human()
+      		setGame()
+   	   } else {
 			setGame();
-      computerAction();
-    }
+      		computerAction();
+    	}
 	}
 }
 
@@ -82,18 +99,9 @@ function disappearBoard() {
 	board.style.display = "none"
 }
 
-function toggleText() {
-	let text = document.getElementById("rules")
-	if (text.style.display === "none") {
-		text.style.display = "block"
-	} else {
-		text.style.display = "none"
-	}
-}
-
 function pieceOut(elem, index) {
 	elem.addEventListener("click", function handleClick(event) {
-		if(!didMove) {                                  // Feita uma jogada, não permitir jogar logo de seguida
+		if(!didMove) {                                  // Feita uma jogada, nao permitir jogar logo de seguida
 			if (!elem.previousElementSibling) {
 				piecesColumn[index]--
 				totalPieces--
@@ -150,12 +158,14 @@ async function computerAction() {
 				b.removeChild(b.firstChild)
 			}
 
+			console.log("Computer Move: " + nCompMove)
+
 			if (dif_value == 1) {
 				moveComputer1()
 			} else if (dif_value == 2) {
-					moveComputer2()
+				moveComputer2()
 			} else
-					moveComputer3()
+				moveComputer3()
 
 			nCompMove++
 
@@ -187,20 +197,21 @@ function moveComputer1() {
 function moveComputer2() {
 
 	if (nCompMove % 2 == 0) {
-		moveComputer3()
-	} else
 		moveComputer1()
+	} else
+		moveComputer3()
 }
 
 function moveComputer3() {
 	let totalNimSum = 0
+	let i
 
-	for (let i = 0; i < col; i++) {
+	for (i = 0; i < col; i++) {
 		totalNimSum = totalNimSum ^ piecesColumn[i]
 	}
 
 	let result = 0
-	for (let i = 0; i < col; i++) {
+	for (i = 0; i < col; i++) {
 		result = piecesColumn[i] ^ totalNimSum
 		if (result < piecesColumn[i]) {
 			totalPieces -= piecesColumn[i] - result
@@ -208,6 +219,8 @@ function moveComputer3() {
 			break
 		}
 	}
+	if(i==col)
+		moveComputer1()
 }
 
 function human() {
@@ -223,7 +236,7 @@ window.onload = () => {
 	loadTableData(userData)
 }
 
-//Atualizar tabela de classificações ao recarregar a página
+//Atualizar tabela de classificacoes ao recarregar a página
 function initialUpdate() {
 	const userDataStats = userData[0]
 	const computerDataStats = userData[1]
@@ -237,10 +250,10 @@ function initialUpdate() {
   	} else {
 			localStorage.UserWins=0
 			localStorage.ComputerWins=0
-		}
+	}
 		loadTableData([userDataStats, computerDataStats])
   } else
-			console.log("não suportado")
+	    console.log("nao suportado")
 }
 
 function quitGame() {
@@ -271,7 +284,7 @@ function toggleTable() {
   document.getElementById("tableClass").classList.toggle("hidden")
 }
 
-//Atualizar tabela de classificações quando o jogador ganha
+//Atualizar tabela de classificacoes quando o jogador ganha
 function updateUserWins(userDataStats, computerDataStats) {
 
 	if(localStorage.UserWins) {
@@ -282,7 +295,7 @@ function updateUserWins(userDataStats, computerDataStats) {
 	}
 }
 
-//Atualizar a tabela de classificações quando o computador ganha
+//Atualizar a tabela de classificacoes quando o computador ganha
 function updateComputerWins(userDataStats, computerDataStats) {
 
 	if(localStorage.ComputerWins) {
@@ -293,13 +306,30 @@ function updateComputerWins(userDataStats, computerDataStats) {
 		}
 }
 // Get the modal
-var modal = document.getElementById("modal");
+const modal = document.getElementById("modal");
 
 // Get the button that opens the modal
-var btn = document.getElementById("myBtn");
+const btn = document.getElementById("myBtn");
 
 // Get the <span> element that closes the modal
-var span = document.getElementsByClassName("close")[0];
+const span = document.getElementsByClassName("close")[0];
+
+
+function appearCompScores() {
+	const firstPlay = document.getElementById("firstPlay");
+	const diffChoice = document.getElementById("diffChoice");
+	firstPlay.style.display = "inline-flex";
+	diffChoice.style.display = "inline-flex";
+
+}
+
+function appearPlayersScores() {
+	const firstPlay = document.getElementById("firstPlay");
+	firstPlay.style.display = "none";
+	diffChoice.style.display = "none";
+
+}
+
 
 // When the user clicks on the button, open the modal
 btn.onclick = function() {

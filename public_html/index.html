@@ -12,16 +12,21 @@
 
 
 
-<div>
-    <div style = "text-align: right;"> Nome do Utilizador: <input type = text> Password: <input type = password> <input type="button" value="Login">
-    </div>
+<div style = "text-align: right;">
+    <form class = "login-form">
+       Nome do Utilizador: <input type = text autofocus class="login-info" id="id"> Password: <input type = password class="login-info" id="pass"> <input type="button" value="Login" onclick="register()">
+    </form>
 </div>
 
 <br>
 
 
 <div class = center> <h1> O Jogo do <i>Nim</i> </h1></div>
-<div class = center> <h2> Joga contra o computador!</h2></div>
+<div class = center> <h2> Joga contra o computador ou contra outra pessoa!</h2></div>
+<div class = "center">
+  Pessoa <input type="radio" name="radio2" id="pessoa" checked="checked" value="pessoa" onchange="appearPlayersScores()"> 
+  Computador<input type="radio" name="radio2" id="computador" value="computador" onchange="appearCompScores()">
+</div>
 
 <div class="box">
 	<a class="button" href="#popup1">Regras</a>
@@ -39,60 +44,70 @@
       <br>
       <br>
       No início do jogo, o jogador realiza o primeiro movimento, a menos que deixe o computador jogar primeiro escolhendo a opção "Computador" de "Primeira Jogada".
-</p>
 		</div>
 	</div>
 </div>
 
 
-<div class="center">
+<div class="center1">
   Número de Pilhas:
   <select size=1 name=size id="size">
     <option value="5"> 5 </option>
     <option value="7"> 7</option>
     <option value="8"> 8</option>
   </select>
-  &nbsp;
+  <div id="diffChoice" style="display: none">
   Dificuldade:
   <select size=1 name=size id = "difficulty">
   <option value="1">I</option>
   <option value="2">II</option>
   <option value="3">III</option>
   </select>
-  &nbsp;
+  </div>
+  <div id="firstPlay" style="display: none">
   Primeira Jogada: Jogador<input type="radio" name="radio1" id="r1" checked="checked" value="r1"> Computador<input type="radio" name="radio1" id="r2" value="r2">
+  </div>
 </div>
 
-<br>
+
 <br>
 <br>
 
 <div class = "center">
 <button class = "button" type="button" onclick="appearBoard()"> Iniciar o Jogo</button>
 <button class = "button" type="button" onclick="quitGame()"> Desistir do Jogo</button>
-<button class = "button" type="button" onclick="toggleTable()">Classificações</button>
+<a class="button" href="#popup2">Classificações contra o computador</a>
+<button class = "button" type="button">Ranking</button>
+<br>
+<br>
+</div>
 
-<br>
-<br>
 <div id="board" style="display :none"> </div>
-</div>
-<br>
-
-<div class = "scores">
-<table style ="width:30%; border:1px solid black;margin-left:auto;margin-right:auto;" id="tableClass" class="hidden">
-  <thead>
-    <tr>
-      <th>Utilizador</th>
-      <th>Vitórias</th>
-      <th>Perdas</th>
-    </tr>
-  </thead>
-  <tbody id = "tableData"> </tbody>
-</table>
-</div>
 
 <br>
 
+<div class="overlay" id="popup2">
+  <div class="popup">
+    <h2>Classificações</h2>
+    <a class="close" href="#">&times;</a>
+    <div class="content">
+      <div class = "scores">
+        <table style ="width:30%; border:1px solid black;margin-left:auto;margin-right:auto;" id="tableClass">
+          <thead>
+            <tr>
+              <th>Utilizador</th>
+              <th>Vitórias</th>
+              <th>Perdas</th>
+            </tr>
+          </thead>
+          <tbody id = "tableData"> </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
 
+<!-- tabela para top 10 jogadores-->
+<br>
 </body>
 </html>

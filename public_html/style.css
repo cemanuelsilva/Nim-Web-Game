@@ -8,6 +8,14 @@ body {
   text-align: center;
 }
 
+.center2 {
+  text-align: center;
+  display: inline-flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: auto;
+}
+
 
 #right {
   text-align: right;
@@ -16,6 +24,13 @@ body {
 
 h2 {
   color: steelblue;
+}
+
+.center1 {
+  text-align: center;
+  flex-direction: row;
+  justify-content: center;
+  flex-wrap: nowrap;
 }
 
 .column {
@@ -50,6 +65,7 @@ h2 {
   justify-content: center;
   margin-top: 20px;
   padding-top: 20px;
+  margin: auto;
 }
 
 table, th, td {
@@ -140,8 +156,6 @@ table.scores { width:300px; border-collapse: collapse; }
   text-decoration: none;
   cursor: pointer;
 }
-
-
 
 .overlay {
   position: fixed;
