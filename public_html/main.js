@@ -16,26 +16,35 @@ let userData = [
 	{ utilizador: "Computador", Wins: countWinPC, Loses: countWinP1 }
 ]
 
+
 let host = "twserver.alunos.dcc.fc.up.pt";
 let port = "8008";
 
 function register() {
-	if(!XMLHttpRequest) { console.log("XHR não é suportado"); return; }
 	const user = document.getElementById('id').value
 	const password = document.getElementById('pass').value
+	const login = "http://"+host+":" + port + "/register";
 
-	const xhr = new XMLHttpRequest()
-	xhr.open('POST', 'https://' + host + ':' + port , true)
-	xhr.setRequestHeader('Content-Type', 'application/json')
-	xhr.onreadystatechange = function () {
-		if (xhr.readyState === 4 && xhr.status === 200) {
-            const data = JSON.parse(xhr.responseText)
-            console.log(data.value)
-	   } else
-	      console.log("erro")
-	}
-	xhr.send(JSON.stringify({ 'user': user, 'password': password }));
-}
+	fetch(login, {
+		method: "POST",
+		headers: {
+			Accept: "application/json, text/plain, */*",
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify({
+			nick: user,
+			password: password,
+		}),
+	})
+	.then(function(response) {
+		if(user=="" || password=="") 
+			console.log("Missing username or password");
+		else {
+			response.text().then(console.log);
+		}
+	})
+	 .catch(console.log)
+};
 
 // Funcao que permite a visualizacao do estado corrente do jogo
 function setGame() {
@@ -278,10 +287,6 @@ function loadTableData(userData) {
 	console.log(dataHtml)
 
 	tableBody.innerHTML = dataHtml
-}
-
-function toggleTable() {
-  document.getElementById("tableClass").classList.toggle("hidden")
 }
 
 //Atualizar tabela de classificacoes quando o jogador ganha
