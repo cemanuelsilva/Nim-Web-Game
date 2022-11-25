@@ -19,10 +19,14 @@ let userData = [
 
 let host = "twserver.alunos.dcc.fc.up.pt";
 let port = "8008";
+let group = 18;
+let user;
+let pass;
+
 
 function register() {
-	const user = document.getElementById('id').value
-	const password = document.getElementById('pass').value
+	user = document.getElementById('id').value
+	password = document.getElementById('pass').value
 	const login = "http://"+host+":" + port + "/register";
 
 	fetch(login, {
@@ -42,6 +46,29 @@ function register() {
 		else {
 			response.text().then(console.log);
 		}
+	})
+	 .catch(error.Log)
+};
+
+function join() {
+	const url = "http://"+host+":" + port + "/join";
+	fetch(url, {
+		method: "POST",
+        headers: { 
+			Accept: "application/json, text/plain, */*",
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify({
+            group: group,
+			nick: user,
+			password: password,
+			size: col
+		})
+	})
+	.then(function(response) {
+		response.text().then(console.log);
+		// Obter o valor de game
+		// pedido sse update com nick=user e game=game 
 	})
 	 .catch(console.log)
 };
@@ -68,35 +95,41 @@ function setGame() {
 function appearBoard() {
 
 	let b = document.getElementById("board")
+	var radioPush2 = document.querySelector('input[name=radio2]:checked').value;
 
-	if (b.style.display === "none") {
-		let selId = document.getElementById("size")
-		col = parseInt(selId.options[selId.selectedIndex].value)
+	let selId = document.getElementById("size")
+	col = parseInt(selId.options[selId.selectedIndex].value)
+	if(radioPush2 == "computador") {
 
-		const dif_id = document.getElementById("difficulty")
-	  dif_value = parseInt(dif_id.options[dif_id.selectedIndex].value)
+		if (b.style.display === "none") {
 
-		let c = col
-		totalPieces = 0
-		for (let i = 0; i < col; i++, c--) {
-			piecesColumn[i] = c
-			totalPieces += c
+			const dif_id = document.getElementById("difficulty")
+			dif_value = parseInt(dif_id.options[dif_id.selectedIndex].value)
+
+			let c = col
+			totalPieces = 0
+			for (let i = 0; i < col; i++, c--) {
+				piecesColumn[i] = c
+				totalPieces += c
+			}
+
+			board.style.display = "flex"
+			var radioPush = document.querySelector('input[name=radio1]:checked').value;
+
+			nCompMove = 0
+			nHumanMove = 0
+				initGame = true
+
+		if(radioPush == "r1") {
+				human()
+				setGame()
+		} else {
+				setGame();
+				computerAction();
+			}
 		}
-
-		board.style.display = "flex"
-		var radioPush = document.querySelector('input[name=radio1]:checked').value;
-
-		nCompMove = 0
-		nHumanMove = 0
-      		initGame = true
-
-	   if(radioPush == "r1") {
-      		human()
-      		setGame()
-   	   } else {
-			setGame();
-      		computerAction();
-    	}
+	} else {
+		join();
 	}
 }
 
@@ -162,12 +195,11 @@ async function computerAction() {
 		disappearBoard()
 		loadTableData([userDataStats, computerDataStats])
 	} else if (totalPieces>0) {
+
 			let b = document.getElementById("board")
 			while (b.firstChild) {
 				b.removeChild(b.firstChild)
 			}
-
-			console.log("Computer Move: " + nCompMove)
 
 			if (dif_value == 1) {
 				moveComputer1()
@@ -185,6 +217,7 @@ async function computerAction() {
 				updateComputerWins(userDataStats,computerDataStats)
 				disappearBoard()
 				loadTableData([userDataStats, computerDataStats])
+
 			} else
 				 humanAction()
 		}
@@ -320,7 +353,7 @@ const btn = document.getElementById("myBtn");
 const span = document.getElementsByClassName("close")[0];
 
 
-function appearCompScores() {
+function appearCompOptions() {
 	const firstPlay = document.getElementById("firstPlay");
 	const diffChoice = document.getElementById("diffChoice");
 	firstPlay.style.display = "inline-flex";
@@ -328,7 +361,7 @@ function appearCompScores() {
 
 }
 
-function appearPlayersScores() {
+function appearPlayersOptions() {
 	const firstPlay = document.getElementById("firstPlay");
 	firstPlay.style.display = "none";
 	diffChoice.style.display = "none";

@@ -24,8 +24,8 @@
 <div class = center> <h1> O Jogo do <i>Nim</i> </h1></div>
 <div class = center> <h2> Joga contra o computador ou contra outra pessoa!</h2></div>
 <div class = "center">
-  Pessoa <input type="radio" name="radio2" id="pessoa" checked="checked" value="pessoa" onchange="appearPlayersScores()"> 
-  Computador<input type="radio" name="radio2" id="computador" value="computador" onchange="appearCompScores()">
+  Pessoa <input type="radio" name="radio2" id="pessoa" checked="checked" value="pessoa" onchange="appearPlayersOptions()" autocomplete="off"> 
+  Computador<input type="radio" name="radio2" id="computador" value="computador" onchange="appearCompOptions()" autocomplete="off">
 </div>
 
 <div class="box">
@@ -48,6 +48,7 @@
 	</div>
 </div>
 
+<br>
 
 <div class="center1">
   Número de Pilhas:
@@ -58,14 +59,14 @@
   </select>
   <div id="diffChoice" style="display: none">
   Dificuldade:
-  <select size=1 name=size id = "difficulty">
+  <select size=1 name=size id = "difficulty" style="margin-top: -2px;">
   <option value="1">I</option>
   <option value="2">II</option>
   <option value="3">III</option>
   </select>
   </div>
   <div id="firstPlay" style="display: none">
-  Primeira Jogada: Jogador<input type="radio" name="radio1" id="r1" checked="checked" value="r1"> Computador<input type="radio" name="radio1" id="r2" value="r2">
+  Primeira Jogada: Jogador<input type="radio" name="radio1" id="r1" checked="checked" value="r1" style="margin-top: -3px;"> Computador<input type="radio" name="radio1" id="r2" value="r2" style="margin-top: -3px;">
   </div>
 </div>
 
