@@ -89,7 +89,7 @@ function update() {
 	const eventSource = new EventSource(url);
 	eventSource.onmessage = function(event) {
 		const data = JSON.parse(event.data);
-		//console.log(data);
+		console.log(event.data);
 		if('winner' in data) {
 			if(data["winner"] == user) {
 				alert("Parabéns! Ganhou");
@@ -170,6 +170,7 @@ function appearBoard() {
 
 			let c = col
 			totalPieces = 0
+
 			for (let i = 0; i < col; i++, c--) {
 				piecesColumn[i] = c
 				totalPieces += c
@@ -182,14 +183,15 @@ function appearBoard() {
 			nHumanMove = 0
 			initGame = true
 
-		if(radioPush == "r1") {
+			if(radioPush == "r1") {
 				human()
 				setGame()
-		} else {
+			} else {
 				setGame();
-				computerAction();
+				omputerAction();
 			}
 		}
+
 	} else {
 		join();
 	}
@@ -240,7 +242,8 @@ function pieceOut2(elem, index) {
 			    didMove=true
 				notify(piecesColumn[index], index)
 		} else {
-			alert("Jogada Inválida")
+			notify(piecesColumn[index], index)
+			alert("Não é a sua vez")
 		}
 	})
 }
@@ -432,10 +435,11 @@ function leave() {
 		})
 	})
 
-	.then(function(response) {
-		response.text().then(console.log);
-	})
-	.catch(console.log);
+	.then(response => response.json())
+	.then((data) => {
+		console.log(data);
+	 })
+	 .catch(console.log)
 }
 
 
