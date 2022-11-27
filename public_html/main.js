@@ -1,3 +1,5 @@
+// Jogar contra compputador
+
 let currentPlayer                // Jogador atual
 let totalPieces                  // Numero atual de pecas no tabuleiro
 let piecesColumn = []            // Array que guarda o numero de pecas por coluna/pilha
@@ -16,20 +18,24 @@ let userData = [
 	{ utilizador: "Computador", Wins: countWinPC, Loses: countWinP1 }
 ]
 
+// Jogar contra outra pessoa
 
 let host = "twserver.alunos.dcc.fc.up.pt";
 let port = "8008";
 let group = 18;
 let user;
 let pass;
+let gameId;
+let turn;
+let radioPush2;
 
 
 function register() {
 	user = document.getElementById('id').value
 	password = document.getElementById('pass').value
-	const login = "http://"+host+":" + port + "/register";
+	const url = "http://"+host+":" + port + "/register";
 
-	fetch(login, {
+	fetch(url, {
 		method: "POST",
 		headers: {
 			Accept: "application/json, text/plain, */*",
@@ -42,12 +48,12 @@ function register() {
 	})
 	.then(function(response) {
 		if(user=="" || password=="") 
-			console.log("Missing username or password");
+			throw new Error("Nome de utilizador ou password em falta");
 		else {
 			response.text().then(console.log);
 		}
 	})
-	 .catch(error.Log)
+	 .catch(console.log)
 };
 
 function join() {
@@ -65,13 +71,47 @@ function join() {
 			size: col
 		})
 	})
-	.then(function(response) {
-		response.text().then(console.log);
-		// Obter o valor de game
-		// pedido sse update com nick=user e game=game 
-	})
+	 .then(response => response.json())
+	 .then((data) => {
+		console.log(data);
+		if(data.error) {
+			throw new Error("Não foi possível começar o jogo")
+		} else {
+			gameId = data["game"];
+			update();
+		}
+	 })
 	 .catch(console.log)
 };
+
+function update() {
+	const url = "http://"+host+":" + port + "/update?nick=" + user + "&game=" + gameId;
+	const eventSource = new EventSource(url);
+	eventSource.onmessage = function(event) {
+		const data = JSON.parse(event.data);
+		//console.log(data);
+		if('winner' in data) {
+			if(data["winner"] == user) {
+				alert("Parabéns! Ganhou");
+			}
+			else if(data["winner"] !== null) { 
+                alert("Perdeu... Tente novamente!");
+            }
+			else {
+				alert("Desistiu da espera")
+			}
+			disappearBoard();
+			eventSource.close();
+		} else {
+			turn = data["turn"];
+			piecesColumn = data["rack"];
+			const board = document.getElementById("board")
+			board.style.display = "flex"
+			setGame2();
+		}
+	}
+}
+
 
 // Funcao que permite a visualizacao do estado corrente do jogo
 function setGame() {
@@ -91,11 +131,33 @@ function setGame() {
 	}
 }
 
+function setGame2() {
+    const board = document.getElementById("board")
+
+	didMove = false
+
+	while (board.firstChild) {
+		board.removeChild(board.firstChild)
+	}
+
+	for (let i = col-1; i >= 0; i--) {
+		const column = document.createElement("div")
+		column.className = "column"
+		board.appendChild(column)
+		for (let j = 0; j < piecesColumn[i]; j++) {
+			const piece = document.createElement("div")
+			pieceOut2(piece,i)
+			piece.className = "piece"
+			column.appendChild(piece)
+		}
+	}
+}
+
 // Funcao para inicializar o jogo
 function appearBoard() {
 
 	let b = document.getElementById("board")
-	var radioPush2 = document.querySelector('input[name=radio2]:checked').value;
+	radioPush2 = document.querySelector('input[name=radio2]:checked').value;
 
 	let selId = document.getElementById("size")
 	col = parseInt(selId.options[selId.selectedIndex].value)
@@ -118,7 +180,7 @@ function appearBoard() {
 
 			nCompMove = 0
 			nHumanMove = 0
-				initGame = true
+			initGame = true
 
 		if(radioPush == "r1") {
 				human()
@@ -162,6 +224,48 @@ function pieceOut(elem, index) {
 				alert("Jogada Inválida")
 			}
 	})
+}
+
+function pieceOut2(elem, index) {
+	elem.addEventListener("click", function handleClick(event) {
+		if(!didMove && user==turn) {                                  
+			if (!elem.previousElementSibling) {
+				event.target.remove()
+				piecesColumn[index]--
+			} else {
+				removeAllBefore(elem, index)
+				event.target.remove()
+				piecesColumn[index]--
+			}
+			    didMove=true
+				notify(piecesColumn[index], index)
+		} else {
+			alert("Jogada Inválida")
+		}
+	})
+}
+
+function notify(pieces, stack) {
+	const url = "http://" + host + ":" + port + "/notify"
+
+	fetch(url, {
+		method: "POST",
+        headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify({
+            nick: user,
+			password: password,
+			game: gameId,
+			stack: stack,
+			pieces: pieces
+		})
+	})
+	.then(response => response.json())
+	.then((data) => {
+		console.log(data);
+	 })
+	 .catch(console.log)
 }
 
 function removeAllBefore(el, index) {
@@ -275,7 +379,7 @@ function computer() {
 
 window.onload = () => {
 	initialUpdate();
-	loadTableData(userData)
+	loadTableData(userData);
 }
 
 //Atualizar tabela de classificacoes ao recarregar a página
@@ -299,16 +403,41 @@ function initialUpdate() {
 }
 
 function quitGame() {
-	const userDataStats = userData[0]
-	const computerDataStats = userData[1]
-	if(initGame) {
-		alert("Desistiu do jogo... Perdeu")
-		updateComputerWins(userDataStats,computerDataStats)
-		loadTableData([userDataStats, computerDataStats])
-		disappearBoard()
-		initGame = false
+	if(radioPush2=="computador") {
+		const userDataStats = userData[0]
+		const computerDataStats = userData[1]
+		if(initGame) {
+			alert("Desistiu do jogo... Perdeu")
+			updateComputerWins(userDataStats,computerDataStats)
+			loadTableData([userDataStats, computerDataStats])
+			disappearBoard()
+			initGame = false
+		}
+	} else {
+		leave();
 	}
 }
+
+function leave() {
+	const url = "http://" + host + ":" + port + "/leave";
+	fetch(url, {
+		method: "POST",
+		headers: {
+            "Content-Type": "application/json"
+		},
+		body: JSON.stringify({
+			nick: user,
+			password: password,
+			game: gameId,
+		})
+	})
+
+	.then(function(response) {
+		response.text().then(console.log);
+	})
+	.catch(console.log);
+}
+
 
 function loadTableData(userData) {
 	const tableBody = document.getElementById("tableData")
@@ -317,7 +446,6 @@ function loadTableData(userData) {
 	for (let person of userData) {
 		dataHtml += `<tr><td>${person.utilizador}</td><td>${person.Wins}</td><td>${person.Loses}</td></tr>`
 	}
-	console.log(dataHtml)
 
 	tableBody.innerHTML = dataHtml
 }
@@ -343,14 +471,6 @@ function updateComputerWins(userDataStats, computerDataStats) {
 		userDataStats.Loses=localStorage.ComputerWins
 		}
 }
-// Get the modal
-const modal = document.getElementById("modal");
-
-// Get the button that opens the modal
-const btn = document.getElementById("myBtn");
-
-// Get the <span> element that closes the modal
-const span = document.getElementsByClassName("close")[0];
 
 
 function appearCompOptions() {
@@ -368,20 +488,3 @@ function appearPlayersOptions() {
 
 }
 
-
-// When the user clicks on the button, open the modal
-btn.onclick = function() {
-  modal.style.display = "block";
-}
-
-// When the user clicks on <span> (x), close the modal
-span.onclick = function() {
-  modal.style.display = "none";
-}
-
-// When the user clicks anywhere outside of the modal, close it
-window.onclick = function(event) {
-  if (event.target == modal) {
-    modal.style.display = "none";
-  }
-}
