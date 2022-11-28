@@ -16,6 +16,12 @@ let initGame = false             // True se o botao "Iniciar Jogo" foi pressiona
 let userData = [
 	{ utilizador: "Jogador", Wins: countWinP1, Loses: countWinPC },
 	{ utilizador: "Computador", Wins: countWinPC, Loses: countWinP1 }
+	
+]
+
+
+let playerData = [
+
 ]
 
 // Jogar contra outra pessoa
@@ -51,10 +57,17 @@ function register() {
 			throw new Error("Nome de utilizador ou password em falta");
 		else {
 			response.text().then(console.log);
+			
+			playerData.push({utilizador: user, Wins: 0, Loses: 0})	// Carlossssss
+
+			console.log(playerData);
+			rankingLoadTable(playerData);							// Carlossssss
 		}
 	})
 	 .catch(console.log)
 };
+
+
 
 function join() {
 	const url = "http://"+host+":" + port + "/join";
@@ -79,6 +92,7 @@ function join() {
 		} else {
 			gameId = data["game"];
 			update();
+
 		}
 	 })
 	 .catch(console.log)
@@ -92,10 +106,13 @@ function update() {
 		console.log(event.data);
 		if('winner' in data) {
 			if(data["winner"] == user) {
+
 				alert("Parabéns! Ganhou");
+				
 			}
 			else if(data["winner"] !== null) { 
                 alert("Perdeu... Tente novamente!");
+				
             }
 			else {
 				alert("Desistiu da espera")
@@ -383,6 +400,7 @@ function computer() {
 window.onload = () => {
 	initialUpdate();
 	loadTableData(userData);
+	rankingLoadTable(playerData);
 }
 
 //Atualizar tabela de classificacoes ao recarregar a página
@@ -492,3 +510,31 @@ function appearPlayersOptions() {
 
 }
 
+
+// Carlossssss
+
+//Atualizar tabela de classificacoes quando o jogador ganha
+function rankingLoadTable(playerData) {
+	const tableBody = document.getElementById("rankingTable")
+	let dataHtml = ""
+
+	for (let person of playerData) {
+		dataHtml += `<tr><td>${person.utilizador}</td><td>${person.Wins}</td><td>${person.Loses}</td></tr>`
+	}
+
+	tableBody.innerHTML = dataHtml
+}
+
+
+function updateRankingWins(userData) {
+
+	
+	
+}
+
+//Atualizar a tabela de classificacoes quando o jogador ganha
+
+function updateRankingLoses(userData) {
+
+	
+}

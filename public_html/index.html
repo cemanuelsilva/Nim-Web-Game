@@ -79,7 +79,7 @@
   <button class = "button" type="button" onclick="appearBoard()" id="init"> Iniciar o Jogo</button>
   <button class = "button" type="button" onclick="quitGame()"> Desistir do Jogo</button>
   <a class="button" href="#popup2">Classificações contra o computador</a>
-  <button class = "button" type="button">Ranking</button>
+  <a class="button" href="#popup3">Ranking</a>
   <br>
   <br>
 </div>
@@ -103,6 +103,28 @@
             </tr>
           </thead>
           <tbody id = "tableData"> </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="overlay" id="popup3">
+  <div class="popup">
+    <h2>Ranking</h2>
+    <a class="close" href="#">&times;</a>
+    <div class="content">
+      <div class = "scores">
+        <table style ="width:30%; border:1px solid black;margin-left:auto;margin-right:auto;" id="tableClass">
+          <thead>
+            <tr>
+              <th>Utilizador</th>
+              <th>Vitórias</th>
+              <th>Perdas</th>
+            </tr>
+          </thead>
+          <tbody id = "rankingTable"> </tbody>
         </table>
       </div>
     </div>
