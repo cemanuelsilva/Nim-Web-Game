@@ -513,28 +513,38 @@ function appearPlayersOptions() {
 
 // Carlossssss
 
-//Atualizar tabela de classificacoes quando o jogador ganha
-function rankingLoadTable(playerData) {
-	const tableBody = document.getElementById("rankingTable")
-	let dataHtml = ""
+function ranking() {
+	const url = "http://"+host+":" + port + "/ranking";
+	fetch(url, {
+		method: "POST",
+        headers: { 
+			Accept: "application/json, text/plain, */*",
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify({
+            group: group,
+			size: col
+		})
+	})
+	 .then(response => response.json())
+	 .then((data) => {
+		console.log(data);	
 
-	for (let person of playerData) {
-		dataHtml += `<tr><td>${person.utilizador}</td><td>${person.Wins}</td><td>${person.Loses}</td></tr>`
-	}
+		if(data.error) {
+			
+		} else {
 
-	tableBody.innerHTML = dataHtml
-}
+			const tableBody = document.getElementById("rankingTable")
+			let dataHtml = ""
 
+			for (let values of data) {
+				dataHtml += `<tr><td>${values.nick}</td><td>${values.victories}</td><td>${values.games}</td></tr>`
+			}
 
-function updateRankingWins(userData) {
-
-	
-	
-}
-
-//Atualizar a tabela de classificacoes quando o jogador ganha
-
-function updateRankingLoses(userData) {
-
-	
+			tableBody.innerHTML = dataHtml
+		
+		}
+	 })
+	 .catch(console.log)
+};
 }
