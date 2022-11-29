@@ -19,11 +19,6 @@ let userData = [
 	
 ]
 
-
-let playerData = [
-
-]
-
 // Jogar contra outra pessoa
 
 let host = "twserver.alunos.dcc.fc.up.pt";
@@ -57,11 +52,7 @@ function register() {
 			throw new Error("Nome de utilizador ou password em falta");
 		else {
 			response.text().then(console.log);
-			
-			playerData.push({utilizador: user, Wins: 0, Loses: 0})	// Carlossssss
-
 			console.log(playerData);
-			rankingLoadTable(playerData);							// Carlossssss
 		}
 	})
 	 .catch(console.log)
@@ -175,9 +166,9 @@ function appearBoard() {
 
 	let b = document.getElementById("board")
 	radioPush2 = document.querySelector('input[name=radio2]:checked').value;
+	let selId = document.getElementById("size");
+	col = parseInt(selId.options[selId.selectedIndex].value);
 
-	let selId = document.getElementById("size")
-	col = parseInt(selId.options[selId.selectedIndex].value)
 	if(radioPush2 == "computador") {
 
 		if (b.style.display === "none") {
@@ -400,7 +391,6 @@ function computer() {
 window.onload = () => {
 	initialUpdate();
 	loadTableData(userData);
-	rankingLoadTable(playerData);
 }
 
 //Atualizar tabela de classificacoes ao recarregar a página
@@ -515,6 +505,8 @@ function appearPlayersOptions() {
 
 function ranking() {
 	const url = "http://"+host+":" + port + "/ranking";
+	let selId = document.getElementById("size");
+	col = parseInt(selId.options[selId.selectedIndex].value);
 	fetch(url, {
 		method: "POST",
         headers: { 
@@ -531,13 +523,14 @@ function ranking() {
 		console.log(data);	
 
 		if(data.error) {
-			
+			return;
 		} else {
 
-			const tableBody = document.getElementById("rankingTable")
+			const tableBody = document.getElementById("rankingTable");
+			let playersScores = data["ranking"];
 			let dataHtml = ""
 
-			for (let values of data) {
+			for (let values of playersScores) {
 				dataHtml += `<tr><td>${values.nick}</td><td>${values.victories}</td><td>${values.games}</td></tr>`
 			}
 
@@ -547,4 +540,3 @@ function ranking() {
 	 })
 	 .catch(console.log)
 };
-}
