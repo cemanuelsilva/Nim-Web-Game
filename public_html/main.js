@@ -1,399 +1,476 @@
-// Jogar contra compputador
-
-let currentPlayer                // Jogador atual
-let totalPieces                  // Numero atual de pecas no tabuleiro
-let piecesColumn = []            // Array que guarda o numero de pecas por coluna/pilha
-let nCompMove = 0                // Numero de jogadas realizadas pelo computador
-let nHumanMove = 0               // Numero de jogadas realizadas pelo jogador
-let col                          // Tamanho do tabuleiro selecionado
-let dif_value                    // Nivel de dificuldade selecionado
-let countWinPC = 0               // Valores para a tabela de Classificacoes
-let countWinP1 = 0
-
-let initGame = false             // True se o botao "Iniciar Jogo" foi pressionado
-
-
 let userData = [
-	{ utilizador: "Jogador", Wins: countWinP1, Loses: countWinPC },
-	{ utilizador: "Computador", Wins: countWinPC, Loses: countWinP1 }
-	
+	{ utilizador: "Jogador", Wins: 0, Loses: 0 },
+	{ utilizador: "Computador", Wins: 0, Loses: 0 }
 ]
-
-// Jogar contra outra pessoa
 
 let host = "twserver.alunos.dcc.fc.up.pt";
 let port = "8008";
 let group = 18;
-let user;
-let pass;
-let gameId;
-let turn;
-let radioPush2;
 
+class nimComp {
 
-function register() {
-	user = document.getElementById('id').value
-	password = document.getElementById('pass').value
-	const url = "http://"+host+":" + port + "/register";
+  constructor(dif, col, first) {
+		this.dif = dif;
+		this.col = col;
+		this.first = first;
+		this.initGame = false;
 
-	fetch(url, {
-		method: "POST",
-		headers: {
-			Accept: "application/json, text/plain, */*",
-			"Content-Type": "application/json"
-		},
-		body: JSON.stringify({
-			nick: user,
-			password: password,
-		}),
-	})
-	.then(function(response) {
-		if(user=="" || password=="") 
-			throw new Error("Nome de utilizador ou password em falta");
-		else {
-			response.text().then(console.log);
-			console.log(playerData);
+		let selId = document.getElementById("size");
+		selId.onchange = () => {
+			this.col = parseInt(selId.options[selId.selectedIndex].value);
 		}
-	})
-	 .catch(console.log)
-};
 
-
-
-function join() {
-	const url = "http://"+host+":" + port + "/join";
-	fetch(url, {
-		method: "POST",
-        headers: { 
-			Accept: "application/json, text/plain, */*",
-			"Content-Type": "application/json"
-		},
-		body: JSON.stringify({
-            group: group,
-			nick: user,
-			password: password,
-			size: col
-		})
-	})
-	 .then(response => response.json())
-	 .then((data) => {
-		console.log(data);
-		if(data.error) {
-			throw new Error("Não foi possível começar o jogo")
-		} else {
-			gameId = data["game"];
-			update();
-
+		let difId = document.getElementById("difficulty");
+		difId.onchange = () => {
+			this.dif = parseInt(difId.options[difId.selectedIndex].value);
 		}
-	 })
-	 .catch(console.log)
-};
 
-function update() {
-	const url = "http://"+host+":" + port + "/update?nick=" + user + "&game=" + gameId;
-	const eventSource = new EventSource(url);
-	eventSource.onmessage = function(event) {
-		const data = JSON.parse(event.data);
-		console.log(event.data);
-		if('winner' in data) {
-			if(data["winner"] == user) {
-
-				alert("Parabéns! Ganhou");
-				
-			}
-			else if(data["winner"] !== null) { 
-                alert("Perdeu... Tente novamente!");
-				
-            }
-			else {
-				alert("Desistiu da espera")
-			}
-			disappearBoard();
-			eventSource.close();
-		} else {
-			turn = data["turn"];
-			piecesColumn = data["rack"];
-			const board = document.getElementById("board")
-			board.style.display = "flex"
-			setGame2();
+		let humanId = document.getElementById("r1");
+		humanId.onchange = () => {
+			this.first = document.querySelector('input[name=radio1]:checked').value;
 		}
-	}
-}
 
 
-// Funcao que permite a visualizacao do estado corrente do jogo
-function setGame() {
-	const board = document.getElementById("board")
-	didMove = false
-
-	for (let i = 0; i < col; i++) {
-		const column = document.createElement("div")
-		column.className = "column"
-		board.appendChild(column)
-		for (let j = 0; j < piecesColumn[i]; j++) {
-			const piece = document.createElement("div")
-			pieceOut(piece, i)
-			piece.className = "piece"
-			column.appendChild(piece)
+		let compId = document.getElementById("r2");
+		compId.onchange = () => {
+			this.first = document.querySelector('input[name=radio1]:checked').value;
 		}
-	}
-}
 
-function setGame2() {
-    const board = document.getElementById("board")
+		let init = document.getElementById("init");
+		init.onclick = () => this.appearBoard();
 
-	didMove = false
+		let quit = document.getElementById("quit");
+		quit.onclick = () => this.quitGame();
+	 }
 
-	while (board.firstChild) {
-		board.removeChild(board.firstChild)
-	}
-
-	for (let i = col-1; i >= 0; i--) {
-		const column = document.createElement("div")
-		column.className = "column"
-		board.appendChild(column)
-		for (let j = 0; j < piecesColumn[i]; j++) {
-			const piece = document.createElement("div")
-			pieceOut2(piece,i)
-			piece.className = "piece"
-			column.appendChild(piece)
-		}
-	}
-}
-
-// Funcao para inicializar o jogo
-function appearBoard() {
-
-	let b = document.getElementById("board")
-	radioPush2 = document.querySelector('input[name=radio2]:checked').value;
-	let selId = document.getElementById("size");
-	col = parseInt(selId.options[selId.selectedIndex].value);
-
-	if(radioPush2 == "computador") {
+  appearBoard() {
+		let b = document.getElementById("board");
+		this. piecesColumn = []
+		console.log("JOGO : " + this.first + " " + this.dif + " " + this.col)
 
 		if (b.style.display === "none") {
+				let c = this.col;
+				this.totalPieces = 0;
 
-			const dif_id = document.getElementById("difficulty")
-			dif_value = parseInt(dif_id.options[dif_id.selectedIndex].value)
+				for (let i = 0; i < this.col; i++, c--) {
+					this.piecesColumn[i] = c;
+					this.totalPieces += c;
+				}
 
-			let c = col
-			totalPieces = 0
+				b.style.display = "flex";
 
-			for (let i = 0; i < col; i++, c--) {
-				piecesColumn[i] = c
-				totalPieces += c
+				this.nCompMove = 0;
+				this.initGame = true;
+
+				if(this.first == "r1") {
+					this.setGame();
+				} else {
+					this.setGame();
+					this.computerAction();
+				}
 			}
+			return;
+		}
 
-			board.style.display = "flex"
-			var radioPush = document.querySelector('input[name=radio1]:checked').value;
+	setGame() {
+		const board = document.getElementById("board");
+		this.didMove = false;
 
-			nCompMove = 0
-			nHumanMove = 0
-			initGame = true
+		for (let i = 0; i < this.col; i++) {
+			const column = document.createElement("div");
+			column.className = "column";
+			board.appendChild(column);
+			for (let j = 0; j < this.piecesColumn[i]; j++) {
+				const piece = document.createElement("div");
+				piece.onclick = () => this.pieceOut(piece,i);
+				piece.className = "piece";
+				column.appendChild(piece);
+			}
+		}
+	}
 
-			if(radioPush == "r1") {
-				human()
-				setGame()
+  pieceOut(elem, index) {
+		if(!this.didMove) {
+			if (!elem.previousElementSibling) {
+				this.piecesColumn[index]--;
+				this.totalPieces--;
+				event.target.remove();
 			} else {
-				setGame();
-				omputerAction();
+				this.removeAllBefore(elem, index);
+				event.target.remove();
+				this.piecesColumn[index]--;
+				this.totalPieces--;
+			}
+			this.didMove=true;
+			this.computerAction();
+		} else {
+				alert("Jogada Inválida");
+		}
+	}
+
+	removeAllBefore(elem, index) {
+		let prevEl = elem.previousElementSibling;
+		while (prevEl) {
+			this.piecesColumn[index]--;
+			this.totalPieces--;
+			prevEl.parentNode.removeChild(prevEl);
+			prevEl = elem.previousElementSibling;
+		}
+	}
+
+	async computerAction() {
+		const userDataStats = userData[0];
+		const computerDataStats = userData[1];
+
+		await new Promise(r => setTimeout(r, 250));
+
+		if(this.totalPieces == 0) {
+			this.initGame = false;
+			alert("Parabéns! Ganhou");
+			this.updateUserWins(userDataStats,computerDataStats);
+			disappearBoard();
+			loadTableData([userDataStats, computerDataStats])
+		} else if (this.totalPieces>0) {
+
+				let b = document.getElementById("board");
+				while (b.firstChild) {
+					b.removeChild(b.firstChild);
+				}
+
+				if (this.dif == 1) {
+					this.moveComputer1();
+			 } else if (this.dif == 2) {
+					this.moveComputer2();
+				} else
+					this.moveComputer3();
+
+				this.nCompMove++;
+
+				if (this.totalPieces == 0) {
+					this.initGame = false;
+					alert("Perdeu ... Tente novamente!")
+					this.updateComputerWins(userDataStats,computerDataStats)
+					disappearBoard();
+					loadTableData([userDataStats, computerDataStats])
+
+				} else
+					this.setGame();
 			}
 		}
 
-	} else {
-		join();
+	moveComputer1() {
+		let index = Math.floor(Math.random() * this.col);
+
+		while (this.piecesColumn[index] == 0) {
+			index = Math.floor(Math.random() * this.col);
+		}
+
+		let pieces = Math.floor(Math.random() * this.piecesColumn[index]);
+
+		this.totalPieces -= this.piecesColumn[index] - pieces;
+		this.piecesColumn[index] = pieces;
+	}
+
+	moveComputer2() {
+		if (this.nCompMove % 2 == 0) {
+			this.moveComputer1()
+	 } else
+			this.moveComputer3()
+	}
+
+	moveComputer3() {
+		let totalNimSum = 0;
+		let i;
+
+		for (i = 0; i < this.col; i++) {
+			totalNimSum = totalNimSum ^ this.piecesColumn[i];
+		}
+
+		let result = 0;
+		for (i = 0; i < this.col; i++) {
+			result = this.piecesColumn[i] ^ totalNimSum;
+			if (result < this.piecesColumn[i]) {
+				this.totalPieces -= this.piecesColumn[i] - result;
+				this.piecesColumn[i] = result;
+				break;
+			}
+		}
+
+		if(i==this.col)
+			this.moveComputer1()
+	}
+
+	quitGame() {
+		const userDataStats = userData[0]
+		const computerDataStats = userData[1]
+		if(this.initGame) {
+			alert("Desistiu do jogo... Perdeu")
+			this.updateComputerWins(userDataStats,computerDataStats)
+			loadTableData([userDataStats, computerDataStats])
+			disappearBoard()
+			this.initGame = false
+		}
+	}
+
+	updateUserWins(userDataStats, computerDataStats) {
+		if(localStorage.UserWins) {
+			localStorage.UserWins=
+				Number(localStorage.UserWins)+1
+			computerDataStats.Loses=localStorage.UserWins
+			userDataStats.Wins=localStorage.UserWins
+		}
+	}
+
+	updateComputerWins(userDataStats, computerDataStats) {
+		if(localStorage.ComputerWins) {
+			localStorage.ComputerWins=
+				Number(localStorage.ComputerWins)+1
+			computerDataStats.Wins=localStorage.ComputerWins
+			userDataStats.Loses=localStorage.ComputerWins
+		}
 	}
 }
 
-function disappearBoard() {
-	let b = document.getElementById("board")
-	while (b.firstChild) {
-		b.removeChild(b.firstChild)
+class nimPlay {
+	constructor(col) {
+		this.col = col;
+		this.user = null;
+		this.password = null;
+
+		let selId = document.getElementById("size");
+		selId.onchange = () => {
+			this.col = parseInt(selId.options[selId.selectedIndex].value);
+		}
+
+		let init = document.getElementById("init");
+		init.onclick = () => this.join();
+
+		let quit = document.getElementById("quit");
+		quit.onclick = () => this.leave();
+
+		let login = document.getElementById("login");
+		login.onclick = () => this.register();
 	}
-	board.style.display = "none"
-}
 
-function pieceOut(elem, index) {
-	elem.addEventListener("click", function handleClick(event) {
-		if(!didMove) {                                  // Feita uma jogada, nao permitir jogar logo de seguida
-			if (!elem.previousElementSibling) {
-				piecesColumn[index]--
-				totalPieces--
-				event.target.remove()
-				nHumanMove++
-			} else {
-				removeAllBefore(elem, index)
-				event.target.remove()
-				nHumanMove++
-				piecesColumn[index]--
-				totalPieces--
-			}
-				didMove=true
-				computerAction()
-			} else {
-				alert("Jogada Inválida")
-			}
-	})
-}
+	register() {
+		this.user = document.getElementById("id").value
+		this.password = document.getElementById("pass").value
+		const url = "http://" + host + ":" + port + "/register";
 
-function pieceOut2(elem, index) {
-	elem.addEventListener("click", function handleClick(event) {
-		if(!didMove && user==turn) {                                  
-			if (!elem.previousElementSibling) {
-				event.target.remove()
-				piecesColumn[index]--
-			} else {
-				removeAllBefore(elem, index)
-				event.target.remove()
-				piecesColumn[index]--
+		fetch(url, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({
+				nick: this.user,
+				password: this.password,
+			}),
+		})
+		.then(response => {
+			if(this.user==""|| this.password=="")
+				throw new Error("Nome de utilizador ou password em falta");
+			else {
+				response.text().then(console.log);
 			}
-			    didMove=true
-				notify(piecesColumn[index], index)
+		})
+		 .catch(console.log)
+	};
+
+	join() {
+		const url = "http://"+ host + ":" + port + "/join";
+		fetch(url, {
+			method: "POST",
+	    headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({
+	      group: group,
+				nick: this.user,
+				password: this.password,
+				size: this.col
+			})
+		})
+		 .then(response => response.json())
+		 .then((data) => {
+			console.log(data);
+			if(data.error) {
+				throw new Error("Não foi possível começar o jogo")
+			} else {
+				this.gameId = data["game"];
+				this.update();
+			}
+		 })
+		 .catch(console.log)
+	}
+
+	update() {
+		const url = "http://" + host + ":" + port + "/update?nick=" + this.user + "&game=" + this.gameId;
+		const eventSource = new EventSource(url);
+		eventSource.onmessage = event => {
+			const data = JSON.parse(event.data);
+			console.log(event.data);
+			if('winner' in data) {
+				if(data["winner"] == this.user) {
+						alert("Parabéns! Ganhou");
+				} else if(data["winner"] !== null) {
+	        	alert("Perdeu... Tente novamente!");
+			  } else {
+						alert("Desistiu da espera")
+				}
+				disappearBoard();
+				eventSource.close();
+			} else {
+					this.turn = data["turn"];
+					this.piecesColumn = data["rack"];
+					const board = document.getElementById("board")
+					board.style.display = "flex"
+					this.setGame();
+			}
+		}
+	}
+
+	leave() {
+		const url = "http://" + host + ":" + port + "/leave";
+		fetch(url, {
+			method: "POST",
+			headers: {
+	            "Content-Type": "application/json"
+			},
+			body: JSON.stringify({
+				nick: this.user,
+				password: this.password,
+				game: this.gameId,
+			})
+		})
+
+		.then(response => response.json())
+		.then((data) => {
+			console.log(data);
+		 })
+		 .catch(console.log)
+	}
+
+	notify(pieces, stack) {
+		const url = "http://" + host + ":" + port + "/notify"
+
+		fetch(url, {
+			method: "POST",
+	    headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({
+	      nick: this.user,
+				password: this.password,
+				game: this.gameId,
+				stack: stack,
+				pieces: pieces
+			})
+		})
+		.then(response => response.json())
+		.then((data) => {
+			console.log(data);
+		 })
+		 .catch(console.log)
+	}
+
+	setGame() {
+	  const board = document.getElementById("board")
+		this.didMove = false
+
+		while (board.firstChild) {
+			board.removeChild(board.firstChild)
+		}
+
+
+		for (let i = this.col-1; i >= 0; i--) {
+			const column = document.createElement("div")
+			column.className = "column"
+			board.appendChild(column)
+			for (let j = 0; j < this.piecesColumn[i]; j++) {
+				const piece = document.createElement("div")
+				piece.onclick = () => this.pieceOut(piece,i)
+				piece.className = "piece"
+				column.appendChild(piece)
+			}
+		}
+	}
+
+	pieceOut(elem, index) {
+		if(!this.didMove && this.user==this.turn) {
+			if (!elem.previousElementSibling) {
+					event.target.remove()
+					this.piecesColumn[index]--
+			} else {
+					this.removeAllBefore(elem, index)
+					event.target.remove()
+					this.piecesColumn[index]--
+			}
+				this.didMove=true
+				this.notify(this.piecesColumn[index], index)
 		} else {
-			notify(piecesColumn[index], index)
+			this.notify(this.piecesColumn[index], index)
 			alert("Não é a sua vez")
 		}
-	})
-}
-
-function notify(pieces, stack) {
-	const url = "http://" + host + ":" + port + "/notify"
-
-	fetch(url, {
-		method: "POST",
-        headers: {
-			"Content-Type": "application/json"
-		},
-		body: JSON.stringify({
-            nick: user,
-			password: password,
-			game: gameId,
-			stack: stack,
-			pieces: pieces
-		})
-	})
-	.then(response => response.json())
-	.then((data) => {
-		console.log(data);
-	 })
-	 .catch(console.log)
-}
-
-function removeAllBefore(el, index) {
-	let prevEl
-	prevEl = el.previousElementSibling
-	while (prevEl) {
-		piecesColumn[index]--
-		totalPieces--
-		prevEl.parentNode.removeChild(prevEl)
-		prevEl = el.previousElementSibling
-	}
-}
-
-function humanAction() {
-	human()
-	setGame()
-}
-
-async function computerAction() {
-	const userDataStats = userData[0]
-	const computerDataStats = userData[1]
-
-  await new Promise(r => setTimeout(r, 250))
-
-
-	if (totalPieces == 0) {
-		initGame = false
-		console.log("Jogador ganhou")
-		alert("Parabéns! Ganhou")
-		updateUserWins(userDataStats,computerDataStats);
-		disappearBoard()
-		loadTableData([userDataStats, computerDataStats])
-	} else if (totalPieces>0) {
-
-			let b = document.getElementById("board")
-			while (b.firstChild) {
-				b.removeChild(b.firstChild)
-			}
-
-			if (dif_value == 1) {
-				moveComputer1()
-			} else if (dif_value == 2) {
-				moveComputer2()
-			} else
-				moveComputer3()
-
-			nCompMove++
-
-			if (totalPieces == 0) {
-				console.log("Computador ganhou")
-				alert("Perdeu... Tente novamente")
-				initGame = false
-				updateComputerWins(userDataStats,computerDataStats)
-				disappearBoard()
-				loadTableData([userDataStats, computerDataStats])
-
-			} else
-				 humanAction()
-		}
-}
-
-function moveComputer1() {
-	let index = Math.floor(Math.random() * col)
-
-	while (piecesColumn[index] == 0) {
-		index = Math.floor(Math.random() * col)
 	}
 
-	let pieces = Math.floor(Math.random() * piecesColumn[index])
-
-	totalPieces -= piecesColumn[index] - pieces
-	piecesColumn[index] = pieces
-}
-
-function moveComputer2() {
-
-	if (nCompMove % 2 == 0) {
-		moveComputer1()
-	} else
-		moveComputer3()
-}
-
-function moveComputer3() {
-	let totalNimSum = 0
-	let i
-
-	for (i = 0; i < col; i++) {
-		totalNimSum = totalNimSum ^ piecesColumn[i]
-	}
-
-	let result = 0
-	for (i = 0; i < col; i++) {
-		result = piecesColumn[i] ^ totalNimSum
-		if (result < piecesColumn[i]) {
-			totalPieces -= piecesColumn[i] - result
-			piecesColumn[i] = result
-			break
+	removeAllBefore(elem, index) {
+		let prevEl = elem.previousElementSibling;
+		while (prevEl) {
+			this.piecesColumn[index]--;
+			this.totalPieces--;
+			prevEl.parentNode.removeChild(prevEl);
+			prevEl = elem.previousElementSibling;
 		}
 	}
-	if(i==col)
-		moveComputer1()
-}
-
-function human() {
-	currentPlayer = 1
-}
-
-function computer() {
-	currentPlayer = 2
 }
 
 window.onload = () => {
-	initialUpdate();
+  initialUpdate();
 	loadTableData(userData);
+  let radioPush = document.querySelector('input[name=radio2]:checked').value;
+  let playOptions = document.getElementById('pOptions');
+  let compOptions = document.getElementById('cOptions');
+
+	if(radioPush=="pessoa") {
+		let selId = document.getElementById("size");
+		col = parseInt(selId.options[selId.selectedIndex].value);
+
+		game = new nimPlay(col);
+	}
+
+	 playOptions.onclick = function() {
+		  const firstPlay = document.getElementById("firstPlay");
+		  firstPlay.style.display = "none";
+		  diffChoice.style.display = "none";
+
+			let selId = document.getElementById("size");
+			col = parseInt(selId.options[selId.selectedIndex].value);
+
+			game = new nimPlay(col)
+	  }
+
+	  compOptions.onclick = function() {
+		  const firstPlay = document.getElementById("firstPlay");
+		  const diffChoice = document.getElementById("diffChoice");
+		  firstPlay.style.display = "inline-flex";
+		  diffChoice.style.display = "inline-flex";
+
+			let selId = document.getElementById("size");
+			col = parseInt(selId.options[selId.selectedIndex].value);
+
+			let difId = document.getElementById("difficulty")
+			difVal = parseInt(difId.options[difId.selectedIndex].value)
+
+			let first = document.querySelector('input[name=radio1]:checked').value;
+
+		  game = new nimComp(difVal, col, first);
+		}
+
+		let rank = document.getElementById("ranking");
+		rank.onclick = () => ranking();
 }
 
-//Atualizar tabela de classificacoes ao recarregar a página
 function initialUpdate() {
 	const userDataStats = userData[0]
 	const computerDataStats = userData[1]
@@ -413,44 +490,6 @@ function initialUpdate() {
 	    console.log("nao suportado")
 }
 
-function quitGame() {
-	if(radioPush2=="computador") {
-		const userDataStats = userData[0]
-		const computerDataStats = userData[1]
-		if(initGame) {
-			alert("Desistiu do jogo... Perdeu")
-			updateComputerWins(userDataStats,computerDataStats)
-			loadTableData([userDataStats, computerDataStats])
-			disappearBoard()
-			initGame = false
-		}
-	} else {
-		leave();
-	}
-}
-
-function leave() {
-	const url = "http://" + host + ":" + port + "/leave";
-	fetch(url, {
-		method: "POST",
-		headers: {
-            "Content-Type": "application/json"
-		},
-		body: JSON.stringify({
-			nick: user,
-			password: password,
-			game: gameId,
-		})
-	})
-
-	.then(response => response.json())
-	.then((data) => {
-		console.log(data);
-	 })
-	 .catch(console.log)
-}
-
-
 function loadTableData(userData) {
 	const tableBody = document.getElementById("tableData")
 	let dataHtml = ""
@@ -462,65 +501,26 @@ function loadTableData(userData) {
 	tableBody.innerHTML = dataHtml
 }
 
-//Atualizar tabela de classificacoes quando o jogador ganha
-function updateUserWins(userDataStats, computerDataStats) {
-
-	if(localStorage.UserWins) {
-		localStorage.UserWins=
-			Number(localStorage.UserWins)+1
-		computerDataStats.Loses=localStorage.UserWins
-		userDataStats.Wins=localStorage.UserWins
-	}
-}
-
-//Atualizar a tabela de classificacoes quando o computador ganha
-function updateComputerWins(userDataStats, computerDataStats) {
-
-	if(localStorage.ComputerWins) {
-		localStorage.ComputerWins=
-			Number(localStorage.ComputerWins)+1
-		computerDataStats.Wins=localStorage.ComputerWins
-		userDataStats.Loses=localStorage.ComputerWins
-		}
-}
-
-
-function appearCompOptions() {
-	const firstPlay = document.getElementById("firstPlay");
-	const diffChoice = document.getElementById("diffChoice");
-	firstPlay.style.display = "inline-flex";
-	diffChoice.style.display = "inline-flex";
-
-}
-
-function appearPlayersOptions() {
-	const firstPlay = document.getElementById("firstPlay");
-	firstPlay.style.display = "none";
-	diffChoice.style.display = "none";
-
-}
-
-
-// Carlossssss
-
 function ranking() {
 	const url = "http://"+host+":" + port + "/ranking";
 	let selId = document.getElementById("size");
 	col = parseInt(selId.options[selId.selectedIndex].value);
+
 	fetch(url, {
-		method: "POST",
-        headers: { 
-			Accept: "application/json, text/plain, */*",
-			"Content-Type": "application/json"
-		},
-		body: JSON.stringify({
-            group: group,
-			size: col
+			method: "POST",
+	        headers: {
+				Accept: "application/json, text/plain, */*",
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({
+	         group: group,
+				  	size: col
+			})
 		})
-	})
-	 .then(response => response.json())
-	 .then((data) => {
-		console.log(data);	
+
+	.then(response => response.json())
+	.then((data) => {
+		console.log(data);
 
 		if(data.error) {
 			return;
@@ -535,8 +535,15 @@ function ranking() {
 			}
 
 			tableBody.innerHTML = dataHtml
-		
 		}
-	 })
-	 .catch(console.log)
-};
+	})
+	.catch(console.log)
+}
+
+function disappearBoard() {
+	let b = document.getElementById("board")
+	while (b.firstChild) {
+		b.removeChild(b.firstChild)
+	}
+	board.style.display = "none"
+}

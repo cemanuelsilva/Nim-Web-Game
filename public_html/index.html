@@ -14,7 +14,7 @@
 
 <div style = "text-align: right;">
     <form class = "login-form">
-       Nome do Utilizador: <input type = text id="id" autofocus> Password: <input type = password id="pass"> <input type="button" value="Login" onclick="register()">
+       Nome do Utilizador: <input type = text id="id" autofocus> Password: <input type = password id="pass"> <input type="button" value="Login" id="login">
     </form>
 </div>
 
@@ -24,8 +24,8 @@
 <div class = center> <h1> O Jogo do <i>Nim</i> </h1></div>
 <div class = center> <h2> Joga contra o computador ou contra outra pessoa!</h2></div>
 <div class = "center">
-  Pessoa <input type="radio" name="radio2" id="pessoa" checked="checked" value="pessoa" onchange="appearPlayersOptions()"> 
-  Computador<input type="radio" name="radio2" id="computador" value="computador" onchange="appearCompOptions()">
+  Pessoa <input type="radio" name="radio2" checked="checked" value="pessoa" id="pOptions">
+  Computador<input type="radio" name="radio2" value="computador" id="cOptions">
 </div>
 
 <div class="box">
@@ -42,9 +42,9 @@
       <br>
       Antes de começar um jogo contra o computador, o jogador deve escolher o tamanho do tabuleiro e a dificuldade do computador. Para remover peças de uma pilha, basta cliquar na bola a partir da qual os objetos desejados são eliminados.
       No início do jogo, o jogador realiza o primeiro movimento, a menos que deixe o computador jogar primeiro escolhendo a opção "Computador" de "Primeira Jogada".
-      <br> 
       <br>
-      Para jogar contra outra pessoa, basta escolher o tamanho do tabuleiro, pressionar o botão "Iniciar Jogo" e, depois, esperar por um adversário. 
+      <br>
+      Para jogar contra outra pessoa, basta escolher o tamanho do tabuleiro, pressionar o botão "Iniciar Jogo" e, depois, esperar por um adversário.
 		</div>
 	</div>
 </div>
@@ -60,14 +60,16 @@
   </select>
   <div id="diffChoice" style="display: none">
   Dificuldade:
-  <select size=1 name=size id = "difficulty" style="margin-top: -2px;">
+  <select size=1 name=size id = "difficulty" style="margin-top: -0.5vh;">
   <option value="1">I</option>
   <option value="2">II</option>
   <option value="3">III</option>
   </select>
   </div>
   <div id="firstPlay" style="display: none">
-  Primeira Jogada: Jogador<input type="radio" name="radio1" id="r1" checked="checked" value="r1" style="margin-top: -3px;"> Computador<input type="radio" name="radio1" id="r2" value="r2" style="margin-top: -3px;">
+  Primeira Jogada: Jogador<input type="radio" name="radio1" id="r1" checked="checked" value="r1" style="margin-top: -3px;">
+  &nbsp;
+  Computador<input type="radio" name="radio1" id="r2" value="r2" style="margin-top: -3px;">
   </div>
 </div>
 
@@ -76,10 +78,10 @@
 <br>
 
 <div class = "center">
-  <button class = "button" type="button" onclick="appearBoard()" id="init"> Iniciar o Jogo</button>
-  <button class = "button" type="button" onclick="quitGame()"> Desistir do Jogo</button>
+  <button class = "button" type="button" id="init"> Iniciar o Jogo</button>
+  <button class = "button" type="button" id="quit"> Desistir do Jogo</button>
   <a class="button" href="#popup2">Classificações contra o computador</a>
-  <a class="button" href="#popup3" onclick="ranking()">Ranking</a>
+  <a class="button" href="#popup3" id="ranking">Ranking</a>
   <br>
   <br>
 </div>
@@ -94,7 +96,7 @@
     <a class="close" href="#">&times;</a>
     <div class="content">
       <div class = "scores">
-        <table style ="width:30%; border:1px solid black;margin-left:auto;margin-right:auto;" id="tableClass">
+        <table style ="width:30%; border:1px solid black;margin-left:auto;margin-right:auto;">
           <thead>
             <tr>
               <th>Utilizador</th>
@@ -116,7 +118,7 @@
     <a class="close" href="#">&times;</a>
     <div class="content">
       <div class = "scores">
-        <table style ="width:30%; border:1px solid black;margin-left:auto;margin-right:auto;" id="tableClass">
+        <table style ="width:30%; border:1px solid black;margin-left:auto;margin-right:auto;">
           <thead>
             <tr>
               <th>Utilizador</th>
