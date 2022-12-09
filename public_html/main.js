@@ -7,6 +7,7 @@ let host = "twserver.alunos.dcc.fc.up.pt";
 let port = "8008";
 let group = 18;
 
+
 class nimComp {
 
   constructor(dif, col, first) {
@@ -255,24 +256,17 @@ class nimPlay {
 	register() {
 		this.user = document.getElementById("id").value
 		this.password = document.getElementById("pass").value
-		const url = "http://" + host + ":" + port + "/register";
+		const url = "http://localhost:8018/register";
 
 		fetch(url, {
 			method: "POST",
-			headers: {
-				"Content-Type": "application/json"
-			},
 			body: JSON.stringify({
 				nick: this.user,
 				password: this.password,
 			}),
 		})
 		.then(response => {
-			if(this.user==""|| this.password=="")
-				throw new Error("Nome de utilizador ou password em falta");
-			else {
 				response.text().then(console.log);
-			}
 		})
 		 .catch(console.log)
 	};
@@ -293,15 +287,32 @@ class nimPlay {
 		})
 		 .then(response => response.json())
 		 .then((data) => {
-			console.log(data);
-			if(data.error) {
-				throw new Error("Não foi possível começar o jogo")
-			} else {
-				this.gameId = data["game"];
-				this.update();
-			}
+				console.log(data);
+				if(data.error) {
+					throw new Error("Não foi possível começar o jogo")
+				} else {
+					this.gameId = data["game"];
+					this.initPlayer(this.user, this.col);
+					this.update();
+				}
 		 })
 		 .catch(console.log)
+	}
+
+	initPlayer(user,col) {
+		const url = "http://localhost:8018/initPlayer";
+		fetch(url, {
+			method:'POST',
+			body: JSON.stringify({
+				nick: user,
+				size: col
+			})
+		})
+		.then(response => {
+				response.text().then(console.log);
+		})
+		 .catch(console.log)
+		return;
 	}
 
 	update() {
@@ -310,9 +321,13 @@ class nimPlay {
 		eventSource.onmessage = event => {
 			const data = JSON.parse(event.data);
 			console.log(event.data);
-			if('winner' in data) {
+			if(data.error) {
+				throw new error(data["error"])
+			}
+			else if('winner' in data) {
 				if(data["winner"] == this.user) {
 						alert("Parabéns! Ganhou");
+						this.win(this.user, this.col)
 				} else if(data["winner"] !== null) {
 	        	alert("Perdeu... Tente novamente!");
 			  } else {
@@ -330,12 +345,28 @@ class nimPlay {
 		}
 	}
 
+	win(user, col) {
+		const url = "http://localhost:8018/win";
+		fetch(url, {
+			method:'POST',
+			body: JSON.stringify({
+				nick: user,
+				size: col
+			})
+		})
+		.then(response => {
+				response.text().then(console.log);
+		})
+		 .catch(console.log)
+		return;
+	}
+
 	leave() {
 		const url = "http://" + host + ":" + port + "/leave";
 		fetch(url, {
 			method: "POST",
 			headers: {
-	            "Content-Type": "application/json"
+	      "Content-Type": "application/json"
 			},
 			body: JSON.stringify({
 				nick: this.user,
@@ -370,6 +401,8 @@ class nimPlay {
 		.then(response => response.json())
 		.then((data) => {
 			console.log(data);
+			if(data.error)
+				throw new Error(data["error"]);
 		 })
 		 .catch(console.log)
 	}
@@ -436,7 +469,7 @@ window.onload = () => {
 		let selId = document.getElementById("size");
 		col = parseInt(selId.options[selId.selectedIndex].value);
 
-		game = new nimPlay(col);
+		const game = new nimPlay(col)
 	}
 
 	 playOptions.onclick = function() {
@@ -447,7 +480,7 @@ window.onload = () => {
 			let selId = document.getElementById("size");
 			col = parseInt(selId.options[selId.selectedIndex].value);
 
-			game = new nimPlay(col)
+			const game = new nimPlay(col)
 	  }
 
 	  compOptions.onclick = function() {
@@ -502,28 +535,22 @@ function loadTableData(userData) {
 }
 
 function ranking() {
-	const url = "http://"+host+":" + port + "/ranking";
+	const url = "http://localhost:8018/ranking";
 	let selId = document.getElementById("size");
 	col = parseInt(selId.options[selId.selectedIndex].value);
 
 	fetch(url, {
 			method: "POST",
-	        headers: {
-				Accept: "application/json, text/plain, */*",
-				"Content-Type": "application/json"
-			},
 			body: JSON.stringify({
-	         group: group,
-				  	size: col
+	       group: group,
+				 size: col
 			})
 		})
-
 	.then(response => response.json())
 	.then((data) => {
 		console.log(data);
-
 		if(data.error) {
-			return;
+			throw new Error(data.error)
 		} else {
 
 			const tableBody = document.getElementById("rankingTable");
