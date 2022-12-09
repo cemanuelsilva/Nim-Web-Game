@@ -5,6 +5,7 @@ let http = require('http');
 let path = require('path');
 let url  = require('url');
 let fs   = require('fs');
+let mod = require('./modules');
 
 
 const headers = {
@@ -51,89 +52,19 @@ http.createServer(function(request, response) {
 function createResponse(pathname,body) {
   let answer = {};
   answer.body = '';
-  let nick;
-  let pass;
-  let size;
-  let aux;
-  let ranking;
-  let user;
-  let index;
-  let group;
-
 
   switch(pathname) {
     case '/register':
-      nick = body['nick'];
-      pass = body['password'];
-      if(nick === "" || pass === "") {
-        answer.status = 400;
-        answer.body = "{ error: invalid user/password }";
-      } else {
-          let aux = fs.readFileSync('registos.json');
-          let database = JSON.parse(aux.toString());
-          //console.log(database);
-          let user = database.find(u => u.nick == nick);
-          if(user == null) {
-            database.push({nick: nick, pass: pass});
-            answer.body = "{}";
-            fs.writeFileSync('registos.json', JSON.stringify(database));
-          } else if(user.pass !== pass){
-            answer.body = "{ error: User registered with a different password }";
-            answer.status = 401;
-          } else {
-            answer.body="{}"
-          }
-      }
+      answer = mod.doRegister(body);
       break;
     case '/ranking':
-      group = body["group"];
-      size = body["size"];
-      if(group == null) {
-        answer.status = 400;
-        answer.body = "{ error: Undefined group }"
-      } else if(size == null) {
-        answer.status = 400;
-        answer.body = "{ error: Undefined size }"
-      } else if(!Number.isInteger(size) || size <= 0) {
-        answer.status = 400;
-        answer.body = "{ error: Invalid size \'"+ size + "\' }";
-      } else if(!Number.isInteger(group) || group <= 0) {
-        answer.status = 400;
-        answer.body = "{ error: Invalid group \'"+ group + "\' }";
-      } else {
-        aux = fs.readFileSync('ranking' + size + '.json');
-        ranking = JSON.parse(aux.toString());
-        ranking.sort((a, b) => b.victories - a.victories);
-        const top10 = ranking.slice(0,9);
-        answer.body = "{\"ranking\": "+ JSON.stringify(top10) + "}";
-      }
+      answer = mod.doRanking(body);
       break;
     case '/initPlayer':
-      nick = body['nick'];
-      size = body['size'];
-      aux = fs.readFileSync('ranking' + size + '.json');
-      ranking = JSON.parse(aux.toString());
-      user = ranking.find(u => u.nick == nick);
-      if(user == null) {
-        ranking.push({nick: nick, victories: 0, games: 1});
-        fs.writeFileSync('ranking' + size + '.json',JSON.stringify(ranking));
-      } else {
-        index = ranking.findIndex(u => u.nick == nick);
-        ranking.splice(index,1);
-        ranking.push({nick: nick, victories: user.victories, games: user.games+1});
-        fs.writeFileSync('ranking' + size + '.json',JSON.stringify(ranking));
-      }
+      mod.doInitPlayer(body);
       break;
     case '/win':
-      nick = body['nick'];
-      size = body['size'];
-      aux = fs.readFileSync('ranking' + size + '.json');
-      ranking = JSON.parse(aux.toString());
-      user = ranking.find(u => u.nick == nick);
-      index = ranking.findIndex(u => u.nick == nick);
-      ranking.splice(index,1);
-      ranking.push({nick: nick, victories: user.victories+1, games: user.games});
-      fs.writeFileSync('ranking' + size + '.json',JSON.stringify(ranking));
+      mod.doWin(body);
       break;
     default:
       answer.status = 404;
